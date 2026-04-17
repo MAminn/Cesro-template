@@ -11,6 +11,8 @@ import { LandingTemplateEditorial } from "./landing/LandingTemplateEditorial";
 import type { LandingTemplateEditorialProps } from "./landing/LandingTemplateEditorial";
 import { LandingTemplateMinimal } from "./landing/LandingTemplateMinimal";
 import type { LandingTemplateMinimalProps } from "./landing/LandingTemplateMinimal";
+import { LandingTemplateCesro } from "./landing/cesro/LandingTemplateCesro";
+import type { LandingTemplateCesroProps } from "./landing/cesro/LandingTemplateCesro";
 import { ProductPageModernSplit } from "./productPage/ProductPageModernSplit";
 import type { ProductPageModernSplitProps } from "./productPage/ProductPageModernSplit";
 import { ProductPageClassic } from "./productPage/ProductPageClassic";
@@ -58,6 +60,7 @@ import {
   LandingClassicPreview,
   LandingEditorialPreview,
   LandingMinimalPreview,
+  LandingCesroPreview,
 } from "./previews/LandingPreviews";
 import {
   ProductPageClassicPreview,
@@ -108,12 +111,28 @@ export type TemplateCategory =
   | "checkoutPage"
   | "searchResults";
 
+// Per-template theme tokens (CSS custom-property overrides)
+export interface TemplateThemeTokens {
+  background: string;
+  foreground: string;
+  accent: string;
+  muted: string;
+  fontDisplay: string;
+  fontBody: string;
+}
+
 // Define the structure for a template entry
 export interface TemplateEntry<TProps = any> {
   id: string;
   label: string;
   component: React.FC<TProps>;
   previewComponent: React.FC; // Preview-safe component for admin
+  /** Text direction — defaults to 'ltr' when omitted */
+  direction?: "ltr" | "rtl";
+  /** Locale hint — defaults to 'en' when omitted */
+  locale?: "ar" | "en";
+  /** Scoped CSS variable overrides for this template */
+  themeTokens?: TemplateThemeTokens;
 }
 
 // Define the structure for the entire template config
@@ -162,6 +181,23 @@ export const templateConfig: TemplateConfig = {
       component:
         LandingTemplateMinimal as React.FC<LandingTemplateMinimalProps>,
       previewComponent: LandingMinimalPreview,
+    },
+    {
+      id: "landing-cesro",
+      label: "Demo 5: Cesro (Wholesale RTL)",
+      component:
+        LandingTemplateCesro as React.FC<LandingTemplateCesroProps>,
+      previewComponent: LandingCesroPreview,
+      direction: "rtl",
+      locale: "ar",
+      themeTokens: {
+        background: "#0B1F3A",
+        foreground: "#F8FAFC",
+        accent: "#F97316",
+        muted: "#94A3B8",
+        fontDisplay: "Tajawal",
+        fontBody: "Tajawal",
+      },
     },
   ],
 

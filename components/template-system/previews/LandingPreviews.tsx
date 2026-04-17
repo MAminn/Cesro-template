@@ -6,6 +6,8 @@ import { LandingTemplateModern } from "#root/components/template-system/landing/
 import { LandingTemplateClassic } from "#root/components/template-system/landing/LandingTemplateClassic";
 import { LandingTemplateEditorial } from "#root/components/template-system/landing/LandingTemplateEditorial";
 import { LandingTemplateMinimal } from "#root/components/template-system/landing/LandingTemplateMinimal";
+import { LandingTemplateCesro } from "#root/components/template-system/landing/cesro/LandingTemplateCesro";
+import { CESRO_DEFAULT_CONTENT } from "#root/components/template-system/landing/cesro/defaults";
 
 /**
  * Landing template previews - REAL template rendering with mock data
@@ -39,6 +41,14 @@ export function LandingMinimalPreview() {
   return (
     <PreviewHost>
       <LandingTemplateMinimal content={mockHomepageContent} />
+    </PreviewHost>
+  );
+}
+
+export function LandingCesroPreview() {
+  return (
+    <PreviewHost>
+      <LandingTemplateCesro content={CESRO_DEFAULT_CONTENT} />
     </PreviewHost>
   );
 }

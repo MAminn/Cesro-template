@@ -39,6 +39,16 @@ export interface HomepageHeroContent {
   mobileBackgroundImage?: string;
   /** Multiple hero carousel slides (takes priority over backgroundImage if non-empty) */
   heroSlides?: HeroSlideContent[];
+  /** Small eyebrow text above the headline */
+  eyebrow?: string;
+  /** Body paragraph below subtitle */
+  bodyText?: string;
+  /** Secondary CTA button label */
+  secondaryCtaText?: string;
+  /** Secondary CTA button link or WhatsApp message */
+  secondaryCtaLink?: string;
+  /** Badge/presence line text (e.g. WhatsApp availability note) */
+  badgeText?: string;
 }
 
 /**
@@ -138,6 +148,14 @@ export interface HomepageFooterCtaContent {
   subtitle: string;
   ctaText: string;
   ctaLink: string;
+  /** Eyebrow text above the headline */
+  eyebrow?: string;
+  /** Body paragraph between headline and CTA */
+  bodyText?: string;
+  /** Trust tags shown below the CTA button */
+  trustTags?: string[];
+  /** Full-bleed background image */
+  backgroundImage?: string;
 }
 
 /**
@@ -218,6 +236,14 @@ export interface HomepageAboutUsContent {
   description: string;
   descriptionAr?: string;
   imageUrl?: string;
+  /** Eyebrow text above the headline */
+  eyebrow?: string;
+  /** Second headline line (muted accent) */
+  subtitle?: string;
+  /** Additional body paragraph */
+  secondaryDescription?: string;
+  /** Feature highlight items (title + description pairs) */
+  highlights?: Array<{ title: string; description: string }>;
 }
 
 /**

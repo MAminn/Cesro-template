@@ -3,6 +3,9 @@
 @import "@fontsource/rubik/400.css";
 @import "@fontsource/rubik/500.css";
 @import "@fontsource/rubik/700.css";
+@import "@fontsource/tajawal/400.css";
+@import "@fontsource/tajawal/700.css";
+@import "@fontsource/tajawal/900.css";
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -53,6 +56,17 @@
 .minimal-template [dir="rtl"] blockquote,
 .minimal-template [dir="rtl"] figcaption {
   font-family: "Rubik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ── Cesro (Demo 5) template — RTL denim wholesale ── */
+[data-template="cesro"] {
+  --cesro-bg: #0B1F3A;
+  --cesro-fg: #F8FAFC;
+  --cesro-accent: #F97316;
+  --cesro-muted: #94A3B8;
+  --cesro-whatsapp: #25D366;
+  font-family: "Tajawal", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  direction: rtl;
 }
 
 /* Links */
@@ -329,6 +343,14 @@ input[type="number"] {
 
 /* Editorial chrome toggle — hide global footer when editorial chrome is active */
 html[data-editorial-chrome="true"] #global-footer {
+  display: none !important;
+}
+
+/* Cesro chrome toggle — hide global footer and navbar when Cesro chrome is active */
+html[data-cesro-chrome="true"] #global-footer {
+  display: none !important;
+}
+html[data-cesro-chrome="true"] #global-navbar {
   display: none !important;
 }
 

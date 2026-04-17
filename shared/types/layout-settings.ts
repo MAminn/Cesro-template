@@ -122,6 +122,8 @@ export interface FooterSettings {
   contactPhone?: string;
   /** Contact email shown in footer (minimal template) */
   contactEmail?: string;
+  /** WhatsApp number for direct contact (e.g. "201XXXXXXXXX", no + prefix) */
+  whatsappNumber?: string;
 }
 
 // ─── Combined Layout Settings ───────────────────────────────────────────────

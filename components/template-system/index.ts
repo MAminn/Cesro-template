@@ -18,6 +18,7 @@ export type {
   TemplateCategory,
   TemplateEntry,
   TemplateConfig,
+  TemplateThemeTokens,
 } from "./templateConfig";
 
 // Export home components
@@ -46,6 +47,9 @@ export type { LandingTemplateEditorialProps } from "./landing/LandingTemplateEdi
 
 export { LandingTemplateMinimal } from "./landing/LandingTemplateMinimal";
 export type { LandingTemplateMinimalProps } from "./landing/LandingTemplateMinimal";
+
+export { LandingTemplateCesro } from "./landing/cesro/LandingTemplateCesro";
+export type { LandingTemplateCesroProps } from "./landing/cesro/LandingTemplateCesro";
 
 // Export product page components
 export { ProductPageModernSplit } from "./productPage/ProductPageModernSplit";

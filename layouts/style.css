@@ -6,6 +6,9 @@
 @import "@fontsource/tajawal/400.css";
 @import "@fontsource/tajawal/700.css";
 @import "@fontsource/tajawal/900.css";
+@import "@fontsource/cairo/400.css";
+@import "@fontsource/cairo/700.css";
+@import "@fontsource/cairo/900.css";
 @import "tailwindcss";
 
 @plugin "tailwindcss-animate";
@@ -39,7 +42,13 @@
 .minimal-template td,
 .minimal-template blockquote,
 .minimal-template figcaption {
-  font-family: "Poppins", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    "Poppins",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
 
 /* Arabic body text also uses Rubik */
@@ -55,17 +64,29 @@
 .minimal-template [dir="rtl"] td,
 .minimal-template [dir="rtl"] blockquote,
 .minimal-template [dir="rtl"] figcaption {
-  font-family: "Rubik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family:
+    "Rubik",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
 }
 
 /* ── Cesro (Demo 5) template — RTL denim wholesale ── */
 [data-template="cesro"] {
-  --cesro-bg: #0B1F3A;
-  --cesro-fg: #F8FAFC;
-  --cesro-accent: #F97316;
-  --cesro-muted: #94A3B8;
-  --cesro-whatsapp: #25D366;
-  font-family: "Tajawal", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --cesro-bg: #0b1f3a;
+  --cesro-fg: #f8fafc;
+  --cesro-accent: #f97316;
+  --cesro-muted: #94a3b8;
+  --cesro-whatsapp: #25d366;
+  font-family:
+    "Cairo",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
   direction: rtl;
 }
 
@@ -259,6 +280,70 @@ html[data-page-transition="out"] body {
 @theme {
   --font-poppins: "Poppins", sans-serif;
   --font-roboto-flex: "Roboto Flex Variable", sans-serif;
+
+  /* ── Cesro template tokens ── */
+  --color-navy: #04122b;
+  --color-whatsapp: #25d366;
+  --color-cesro-accent: #f97316;
+  --color-cesro-navy: #0b1f3a;
+  --color-cesro-orange: #f97316;
+  --color-cesro-whatsapp: #25d366;
+  --color-cesro-whatsapp-hover: #1ebe57;
+  --font-heading: "Cairo", system-ui, sans-serif;
+  --font-body-cairo: "Cairo", system-ui, sans-serif;
+}
+
+/* Force-emit Cesro utility classes regardless of scanning */
+@layer utilities {
+  .text-cesro-accent {
+    color: #f97316;
+  }
+  .bg-cesro-accent {
+    background-color: #f97316;
+  }
+  .bg-whatsapp {
+    background-color: #25d366;
+  }
+  .text-whatsapp {
+    color: #25d366;
+  }
+  .bg-navy {
+    background-color: #04122b;
+  }
+  .text-navy {
+    color: #04122b;
+  }
+  .font-heading {
+    font-family: "Cairo", system-ui, sans-serif;
+  }
+  .from-navy {
+    --tw-gradient-from: #04122b;
+    --tw-gradient-from-position: ;
+    --tw-gradient-stops: var(--tw-gradient-from)
+        var(--tw-gradient-from-position),
+      var(--tw-gradient-to) var(--tw-gradient-to-position);
+  }
+  .from-navy\/80 {
+    --tw-gradient-from: rgb(4 18 43 / 0.8);
+    --tw-gradient-from-position: ;
+    --tw-gradient-stops: var(--tw-gradient-from)
+        var(--tw-gradient-from-position),
+      var(--tw-gradient-to) var(--tw-gradient-to-position);
+  }
+  .via-navy {
+    --tw-gradient-via: #04122b;
+    --tw-gradient-stops: var(--tw-gradient-from)
+        var(--tw-gradient-from-position),
+      var(--tw-gradient-via) var(--tw-gradient-via-position, 50%),
+      var(--tw-gradient-to) var(--tw-gradient-to-position);
+  }
+  .via-navy\/65 {
+    --tw-gradient-via: rgb(4 18 43 / 0.65);
+    --tw-gradient-stops: var(--tw-gradient-from)
+        var(--tw-gradient-from-position),
+      var(--tw-gradient-via) var(--tw-gradient-via-position, 50%),
+      var(--tw-gradient-to) var(--tw-gradient-to-position);
+  }
 }
 
 .men-section-image {
@@ -432,7 +517,8 @@ html[data-has-template-newsletter] [data-footer-newsletter] {
 }
 
 @keyframes cartToastPulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 4px 20px rgba(16, 185, 129, 0);
   }
   50% {

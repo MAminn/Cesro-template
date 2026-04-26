@@ -5,6 +5,10 @@ import { getTemplateComponent } from "#root/components/template-system";
 import { useTemplate } from "#root/frontend/contexts/TemplateContext";
 import type { LandingTemplateModernProps } from "#root/components/template-system";
 import type { HomepageContent } from "#root/shared/types/homepage-content";
+import type { CesroLandingContent } from "#root/components/template-system/landing/cesro/content-schema";
+import { cesroLandingContentSchema } from "#root/components/template-system/landing/cesro/validators";
+import { CESRO_DEFAULT_CONTENT } from "#root/components/template-system/landing/cesro/defaults";
+import type { LandingTemplateCesroProps } from "#root/components/template-system/landing/cesro/LandingTemplateCesro";
 import type { CategoryStripItem } from "#root/components/shop/CategoryStrip";
 import type { NewArrivalProduct } from "#root/components/shop/NewArrivals";
 import { useData } from "vike-react/useData";
@@ -28,15 +32,32 @@ interface FeaturedProduct {
 function Page() {
   // SSR-provided CMS content — no flash of defaults
   const ssrData = useData<Data>();
+  const { getTemplateId, isLoading: isTemplateLoading } = useTemplate();
+  const activeLandingTemplateId = getTemplateId("landing") ?? "landing-modern";
+  const isCesro = activeLandingTemplateId === "landing-cesro";
 
+  // ── Cesro-specific state ──────────────────────────────────
+  const [cesroContent, setCesroContent] = useState<CesroLandingContent>(
+    isCesro && ssrData.ssrTemplateId === "landing-cesro"
+      ? (ssrData.homepageContent as CesroLandingContent)
+      : CESRO_DEFAULT_CONTENT,
+  );
+  const [cesroCategories, setCesroCategories] = useState<CategoryStripItem[]>(
+    [],
+  );
+  const [cesroProducts, setCesroProducts] = useState<FeaturedProduct[]>([]);
+
+  // ── HomepageContent state (Demos 1–4) ─────────────────────
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProduct[]>(
     [],
   );
-  const [discountedProducts, setDiscountedProducts] = useState<FeaturedProduct[]>(
-    [],
-  );
+  const [discountedProducts, setDiscountedProducts] = useState<
+    FeaturedProduct[]
+  >([]);
   const [homepageContent, setHomepageContent] = useState<HomepageContent>(
-    ssrData.homepageContent,
+    !isCesro
+      ? (ssrData.homepageContent as HomepageContent)
+      : ({} as HomepageContent),
   );
   const [categories, setCategories] = useState<CategoryStripItem[]>([]);
   const [newArrivals, setNewArrivals] = useState<NewArrivalProduct[]>([]);
@@ -44,10 +65,6 @@ function Page() {
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [newArrivalsLoading, setNewArrivalsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { getTemplateId, isLoading: isTemplateLoading } = useTemplate();
-
-  // Resolve the active landing template ID early so we can use it for content fetching
-  const activeLandingTemplateId = getTemplateId("landing") ?? "landing-modern";
 
   // Track which template ID the CMS content was fetched for.
   // Starts with the SSR template so we skip the redundant initial fetch.
@@ -122,7 +139,21 @@ function Page() {
       .then((contentResult) => {
         if (cancelled) return;
         if (contentResult.success && contentResult.result) {
-          setHomepageContent(contentResult.result);
+          if (activeLandingTemplateId === "landing-cesro") {
+            const parsed = cesroLandingContentSchema.safeParse(
+              contentResult.result,
+            );
+            if (parsed.success) {
+              setCesroContent(parsed.data);
+            } else {
+              console.warn(
+                "[landing] Cesro content validation failed, using defaults",
+              );
+              setCesroContent(CESRO_DEFAULT_CONTENT);
+            }
+          } else {
+            setHomepageContent(contentResult.result as HomepageContent);
+          }
         }
         lastFetchedTemplateRef.current = activeLandingTemplateId;
       })
@@ -134,6 +165,91 @@ function Page() {
       cancelled = true;
     };
   }, [activeLandingTemplateId]);
+
+  // ───────────────────────────────────────────────────
+  // Cesro: resolve categories from CesroLandingContent.categories.source
+  // ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (!isCesro || !cesroContent.categories.enabled) return;
+
+    const src = cesroContent.categories.source;
+    trpc.category.view
+      .query()
+      .then((res) => {
+        if (!res.success || !res.result) return;
+        let items = res.result.filter((c: any) => !c.deleted);
+        if (src.mode === "manual" && src.ids?.length) {
+          const idSet = new Set(src.ids);
+          items = items.filter((c: any) => idSet.has(c.id));
+        } else if (src.source === "category" && src.categoryId) {
+          items = items.filter((c: any) => c.id === src.categoryId);
+        }
+        setCesroCategories(
+          items.slice(0, src.limit).map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug ?? c.id,
+            imageUrl: c.filename || null,
+          })),
+        );
+      })
+      .catch((err) => console.error("Error loading Cesro categories:", err));
+  }, [
+    isCesro,
+    cesroContent.categories.enabled,
+    cesroContent.categories.source,
+  ]);
+
+  // ───────────────────────────────────────────────────
+  // Cesro: resolve products from CesroLandingContent.featuredProducts.source
+  // ───────────────────────────────────────────────────
+  useEffect(() => {
+    if (!isCesro || !cesroContent.featuredProducts.enabled) return;
+
+    const src = cesroContent.featuredProducts.source;
+    const params: Record<string, any> = {
+      limit: src.limit,
+      includeOutOfStock: false,
+    };
+    if (src.mode === "manual" && src.ids?.length) {
+      params.productIds = src.ids;
+    } else if (src.source === "category" && src.categoryId) {
+      params.categoryId = src.categoryId;
+    } else if (src.source === "latest") {
+      params.sortBy = "newest";
+    }
+
+    trpc.product.search
+      .query(params)
+      .then((res) => {
+        if (!res.success || !res.result) return;
+        setCesroProducts(
+          res.result.items.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            price: Number(item.price),
+            discountPrice: item.discountPrice
+              ? Number(item.discountPrice)
+              : null,
+            stock: item.stock,
+            imageUrl: item.imageUrl
+              ? item.imageUrl.startsWith("http")
+                ? item.imageUrl
+                : `/uploads/${item.imageUrl}`
+              : undefined,
+            images: item.images,
+            categoryName: item.categoryName || "",
+            categories: item.categories,
+            available: item.stock > 0,
+          })),
+        );
+      })
+      .catch((err) => console.error("Error loading Cesro products:", err));
+  }, [
+    isCesro,
+    cesroContent.featuredProducts.enabled,
+    cesroContent.featuredProducts.source,
+  ]);
 
   // Fetch categories separately (parallel loading)
   useEffect(() => {
@@ -261,7 +377,10 @@ function Page() {
   }, [homepageContent.discountedProducts?.productIds]);
 
   // Get the selected landing template
-  const templateEntry = getTemplateComponent("landing", activeLandingTemplateId);
+  const templateEntry = getTemplateComponent(
+    "landing",
+    activeLandingTemplateId,
+  );
 
   // Wait for template selection to resolve from DB before rendering
   // This prevents flickering between the default and active template
@@ -275,7 +394,17 @@ function Page() {
 
   const Template = templateEntry.component;
 
-  // Prepare props for LandingTemplateModern
+  // ── Cesro: pass CesroLandingContent-shaped props ──
+  if (isCesro) {
+    const cesroProps: LandingTemplateCesroProps = {
+      content: cesroContent,
+      resolvedCategories: cesroCategories,
+      resolvedProducts: cesroProducts,
+    };
+    return <Template {...(cesroProps as any)} />;
+  }
+
+  // ── Demos 1–4: pass HomepageContent-shaped props ──
   const templateProps: LandingTemplateModernProps = {
     content: homepageContent,
     featuredProducts,

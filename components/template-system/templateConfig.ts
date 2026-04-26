@@ -125,6 +125,8 @@ export interface TemplateThemeTokens {
 export interface TemplateEntry<TProps = any> {
   id: string;
   label: string;
+  /** Short description shown in admin UI */
+  description?: string;
   component: React.FC<TProps>;
   previewComponent: React.FC; // Preview-safe component for admin
   /** Text direction — defaults to 'ltr' when omitted */
@@ -133,6 +135,8 @@ export interface TemplateEntry<TProps = any> {
   locale?: "ar" | "en";
   /** Scoped CSS variable overrides for this template */
   themeTokens?: TemplateThemeTokens;
+  /** Content schema discriminator — undefined defaults to 'homepage' */
+  contentSchema?: "homepage" | "cesro";
 }
 
 // Define the structure for the entire template config
@@ -185,11 +189,13 @@ export const templateConfig: TemplateConfig = {
     {
       id: "landing-cesro",
       label: "Demo 5: Cesro (Wholesale RTL)",
-      component:
-        LandingTemplateCesro as React.FC<LandingTemplateCesroProps>,
+      description:
+        "Arabic RTL denim wholesale landing with WhatsApp CTAs, dark navy theme, and Tajawal typography",
+      component: LandingTemplateCesro as React.FC<LandingTemplateCesroProps>,
       previewComponent: LandingCesroPreview,
       direction: "rtl",
       locale: "ar",
+      contentSchema: "cesro",
       themeTokens: {
         background: "#0B1F3A",
         foreground: "#F8FAFC",
@@ -357,7 +363,8 @@ export const templateConfig: TemplateConfig = {
     {
       id: "search-results-editorial",
       label: "Editorial Layout",
-      component: SearchResultsEditorial as React.FC<SearchResultsEditorialProps>,
+      component:
+        SearchResultsEditorial as React.FC<SearchResultsEditorialProps>,
       previewComponent: SearchResultsEditorialPreview,
     },
   ],

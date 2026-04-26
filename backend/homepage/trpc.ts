@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import {
   publicProcedure,
   router,
@@ -7,171 +8,36 @@ import {
 import { getHomepageContent } from "./get-homepage-content";
 import { updateHomepageContent } from "./update-homepage-content";
 import { uploadHeroImage } from "./upload-hero-image";
-import { ValuePropIconType, type HomepageContent } from "#root/shared/types/homepage-content";
+import { type HomepageContent } from "#root/shared/types/homepage-content";
+import { HomepageContentSchema } from "#root/shared/types/homepage-content-schema";
+import { cesroLandingContentSchema } from "#root/components/template-system/landing/cesro/validators";
+import type { CesroLandingContent } from "#root/components/template-system/landing/cesro/content-schema";
 import { Effect } from "effect";
 
-// Zod schema for validating homepage content
-const HomepageContentSchema = z.object({
-  meta: z.object({
-    enabled: z.boolean(),
-    pageTitle: z.string(),
-    pageDescription: z.string(),
-  }),
-  hero: z.object({
-    enabled: z.boolean(),
-    title: z.string(),
-    subtitle: z.string(),
-    ctaText: z.string(),
-    ctaLink: z.string(),
-    backgroundImage: z.string().nullish(),
-    mobileBackgroundImage: z.string().nullish(),
-    heroSlides: z
-      .array(
-        z.object({
-          id: z.string(),
-          imageUrl: z.string(),
-          mobileImageUrl: z.string().nullish(),
-          linkUrl: z.string().nullish(),
-          alt: z.string().nullish(),
-        }),
-      )
-      .nullish(),
-  }),
-  brandStatement: z.object({
-    enabled: z.boolean(),
-    title: z.string(),
-    description: z.string(),
-    image: z.string().nullish(),
-  }),
-  promoBanner: z.object({
-    enabled: z.boolean(),
-    text: z.string(),
-    linkText: z.string().nullish(),
-    linkUrl: z.string().nullish(),
-  }),
-  categories: z.object({
-    enabled: z.boolean(),
-    title: z.string(),
-    titleAr: z.string().nullish(),
-    subtitle: z.string(),
-    ctaText: z.string(),
-    ctaLink: z.string(),
-  }),
-  featuredProducts: z.object({
-    enabled: z.boolean(),
-    title: z.string(),
-    titleAr: z.string().nullish(),
-    subtitle: z.string(),
-    viewAllText: z.string(),
-    viewAllTextAr: z.string().nullish(),
-    viewAllLink: z.string(),
-    productIds: z.array(z.string().uuid()).nullish(),
-  }),
-  valueProps: z.object({
-    enabled: z.boolean(),
-    items: z.array(
-      z.object({
-        icon: z.nativeEnum(ValuePropIconType),
-        title: z.string(),
-        description: z.string(),
-      }),
-    ),
-  }),
-  newsletter: z.object({
-    enabled: z.boolean(),
-    title: z.string(),
-    subtitle: z.string(),
-    placeholderText: z.string(),
-    ctaText: z.string(),
-    privacyText: z.string(),
-  }),
-  footerCta: z.object({
-    enabled: z.boolean(),
-    title: z.string(),
-    subtitle: z.string(),
-    ctaText: z.string(),
-    ctaLink: z.string(),
-  }),
-  discountedProducts: z
-    .object({
-      enabled: z.boolean(),
-      title: z.string(),
-      titleAr: z.string().nullish(),
-      viewAllText: z.string(),
-      viewAllTextAr: z.string().nullish(),
-      viewAllLink: z.string(),
-      productIds: z.array(z.string().uuid()).nullish(),
-    })
-    .nullish(),
-  newArrivals: z
-    .object({
-      enabled: z.boolean(),
-      title: z.string(),
-      titleAr: z.string().nullish(),
-      viewAllText: z.string(),
-      viewAllTextAr: z.string().nullish(),
-      viewAllLink: z.string(),
-      productIds: z.array(z.string().uuid()).nullish(),
-    })
-    .nullish(),
-  marquee: z
-    .object({
-      enabled: z.boolean(),
-      text: z.string(),
-      textAr: z.string().nullish(),
-    })
-    .nullish(),
-  promoLine: z
-    .object({
-      text: z.string(),
-      textAr: z.string().nullish(),
-    })
-    .nullish(),
-  contactBanner: z
-    .object({
-      enabled: z.boolean(),
-      slides: z.array(
-        z.object({
-          id: z.string(),
-          imageUrl: z.string(),
-          mobileImageUrl: z.string().nullish(),
-          alt: z.string().nullish(),
-        }),
-      ),
-      heading: z.string(),
-      headingAr: z.string().nullish(),
-      description: z.string(),
-      descriptionAr: z.string().nullish(),
-      directionsUrl: z.string().nullish(),
-    })
-    .nullish(),
-  bottomCarousel: z
-    .object({
-      enabled: z.boolean(),
-      slides: z.array(
-        z.object({
-          id: z.string(),
-          imageUrl: z.string(),
-          mobileImageUrl: z.string().nullish(),
-          linkUrl: z.string().nullish(),
-          alt: z.string().nullish(),
-        }),
-      ),
-    })
-    .nullish(),
-  aboutUs: z
-    .object({
-      enabled: z.boolean(),
-      title: z.string(),
-      titleAr: z.string().nullish(),
-      description: z.string(),
-      descriptionAr: z.string().nullish(),
-      imageUrl: z.string().nullish(),
-    })
-    .nullish(),
-  productCarouselTitle: z.string().nullish(),
-  productCarouselTitleAr: z.string().nullish(),
-});
+/**
+ * Picks the correct Zod schema based on templateId and validates content.
+ * Throws a TRPCError with path-level details on failure.
+ */
+function validateHomepageContent(
+  templateId: string | undefined,
+  content: unknown,
+): HomepageContent | CesroLandingContent {
+  const schema =
+    templateId === "landing-cesro"
+      ? cesroLandingContentSchema
+      : HomepageContentSchema;
+
+  const parsed = schema.safeParse(content);
+  if (parsed.success)
+    return parsed.data as HomepageContent | CesroLandingContent;
+
+  throw new TRPCError({
+    code: "BAD_REQUEST",
+    message: parsed.error.issues
+      .map((i) => `${i.path.join(".")}: ${i.message}`)
+      .join("; "),
+  });
+}
 
 export const homepageRouter = router({
   getContent: publicProcedure
@@ -197,13 +63,23 @@ export const homepageRouter = router({
       z.object({
         merchantId: z.string().uuid(),
         templateId: z.string().optional(),
-        content: HomepageContentSchema,
+        content: z.record(z.unknown()),
       }),
     )
     .mutation(async ({ input }) => {
+      console.log(
+        "[wire-debug] SERVER received hero.primaryCta:",
+        JSON.stringify((input.content as any)?.hero?.primaryCta ?? {}),
+      );
+
+      const validated = validateHomepageContent(
+        input.templateId,
+        input.content,
+      );
+
       const content = await updateHomepageContent(
         input.merchantId,
-        input.content as HomepageContent,
+        validated as HomepageContent,
         input.templateId,
       );
       return {

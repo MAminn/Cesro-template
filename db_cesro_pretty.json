@@ -1,0 +1,124 @@
+﻿{
+    "hero": {
+        "enabled": true,
+        "eyebrow": "┘à┘êÏ▒┘æÏ» ",
+        "primaryCta": {
+            "label": "Ï¿",
+            "whatsappMessage": "┘àÏ▒Ï¡Ï¿┘ïÏºÏî ÏúÏ▒┘èÏ» Ïº┘äÏºÏ│Ï¬"
+        },
+        "presenceText": "Ï▒Ï» Ï│Ï▒┘èÏ╣ Ï╣Ï¿Ï▒ ",
+        "secondaryCta": {
+            "label": "ÏºÏÀ┘äÏ¿ Ï╣Ï▒ÏÂ ÏúÏ│Ï╣ÏºÏ▒",
+            "whatsappMessage": "┘àÏ▒Ï¡Ï¿┘ïÏºÏî ÏúÏ▒┘èÏ» ÏÀ┘äÏ¿"
+        },
+        "headlineLine1": "Ï¼┘è┘åÏ▓ Ï¿Ïº┘äÏ¼┘à┘äÏ®",
+        "headlineLine2": "┘ä┘â┘ä ┘àÏÁÏ▒",
+        "supportingText": "┘å┘ê┘ü┘æÏ▒ ┘ä┘àÏ¡┘äÏºÏ¬ Ïº┘ä┘à┘äÏºÏ¿Ï│ ┘êÏº┘äÏ¬Ï¼┘æ",
+        "backgroundImage": "/uploads/homepage/hero-019da9f6-cdc6-7471-bf7a-0f4d9ccd898f.webp"
+    },
+    "meta": {
+        "pageTitle": "CESRO ÔÇö ┘ü┘è ┘àÏÁÏ▒",
+        "pageDescription": "┘à┘êÏ▒┘æÏ» Ï¼┘è┘åÏ▓ Ï¿Ïº┘äÏ¼┘à┘äÏ® ┘ü┘è ┘àÏÁÏ▒ ÔÇö "
+    },
+    "about": {
+        "enabled": true,
+        "eyebrow": "┘à┘å ┘åÏ¡┘å",
+        "features": {
+            "items": [
+                {
+                    "icon": "variety",
+                    "title": "Ï¬Ï┤┘â┘è┘äÏ® ┘à┘êÏ»┘è┘äÏºÏ¬",
+                    "description": "┘à┘êÏ»┘è┘äÏºÏ¬ ┘àÏ¬┘å┘êÏ╣Ï® Ï¬┘åÏºÏ│Ï¿ ┘â┘ä Ïº┘äÏúÏ░┘êÏº┘é ┘êÏº┘äÏúÏ│┘êÏº┘é"
+                },
+                {
+                    "icon": "wholesale",
+                    "title": "ÏúÏ│Ï╣ÏºÏ▒ Ï¼┘à┘äÏ®",
+                    "description": "ÏúÏ│Ï╣ÏºÏ▒ Ï¬┘åÏº┘üÏ│"
+                },
+                {
+                    "icon": "supply",
+                    "title": "Ï¬┘êÏ▒┘èÏ» ┘à┘åÏ¬Ï©┘à",
+                    "description": "Ï¿ÏÂÏºÏ╣Ï® Ï¼Ïº"
+                },
+                {
+                    "icon": "whatsapp",
+                    "title": "Ï«Ï»┘àÏ® ┘êÏºÏ¬Ï│ÏºÏ¿ Ï│Ï▒┘èÏ╣Ï®",
+                    "description": "Ï¬┘êÏºÏÁ┘ä ┘àÏ¿ÏºÏ┤Ï▒ ┘êÏ▒Ï» ┘ü┘êÏ▒┘è Ï╣┘ä┘ë ┘â┘ä ÏºÏ│Ï¬┘üÏ│ÏºÏ▒ÏºÏ¬┘â"
+                }
+            ],
+            "layout": "grid-2-col"
+        },
+        "sideImage": "/uploads/homepage/hero-019da9f6-f360-775b-b589-0cb2f1ea6c7b.webp",
+        "headlineLine1": "┘à┘âÏ¬Ï¿ Ï¼┘à┘ä",
+        "headlineLine2": " ┘àÏÁÏ▒",
+        "bodyParagraphs": [
+            "┘åÏ¡┘å ┘à┘âÏ¬Ï¿ ┘àÏ¬Ï«ÏÁÏÁ ┘ü┘êÏúÏ│Ï╣ÏºÏ▒ Ï¬┘åÏº",
+            "Ï┤Ï║┘ä┘åÏº ┘àÏ¿┘å┘è Ï╣┘ä┘ë Ïº┘äÏ½┘éÏ®"
+        ]
+    },
+    "theme": {
+        "radius": {
+            "lg": "16px",
+            "md": "8px",
+            "sm": "4px"
+        },
+        "spacing": {
+            "sectionY": "6rem"
+        },
+        "accentColor": "#25D366",
+        "primaryColor": "#F97316",
+        "fontFamilyBody": "Tajawal",
+        "fontFamilyDisplay": "Tajawal"
+    },
+    "finalCta": {
+        "cta": {
+            "label": "Ï¬┘êÏºÏÁ┘ä Ï╣┘ä┘ë ┘êÏºÏ¬Ï│ÏºÏ¿",
+            "whatsappMessage": "┘àÏ▒Ï¡Ï¿┘ïÏºÏî ÏúÏ▒┘èÏ» Ïº┘äÏºÏ│Ï¬"
+        },
+        "enabled": true,
+        "eyebrow": "ÏºÏ¿Ï»Ïú ",
+        "trustItems": [
+            {
+                "label": "Ï▒Ï» ┘ü┘êÏ▒┘è",
+                "showDot": true
+            },
+            {
+                "label": "┘êÏºÏ¬Ï│ÏºÏ¿ Ï¿┘èÏ▓┘åÏ│",
+                "showDot": false
+            },
+            {
+                "label": "Ï¿Ï»┘ê┘å Ïº┘äÏ¬Ï▓Ïº┘à",
+                "showDot": false
+            }
+        ],
+        "headlineLines": [
+            "Ï¼Ïº┘çÏ▓ Ï¬",
+            "┘â┘ä┘æ┘à┘åÏº Ï╣┘ä"
+        ],
+        "supportingText": "ÏºÏ│Ï¬┘üÏ│ÏºÏ▒ÏºÏ¬Ïî ÏúÏ│Ï╣ÏºÏ▒Ïî ┘â┘à┘èÏºÏ¬",
+        "accentLineIndex": 1,
+        "backgroundImage": "/uploads/homepage/hero-019da9f7-170c-7673-91b5-c25052315f46.webp"
+    },
+    "categories": {
+        "source": {
+            "mode": "auto",
+            "limit": 6,
+            "source": "featured"
+        },
+        "enabled": false,
+        "headline": "Ï¬Ï│┘ê┘æ┘é Ï¡Ï│Ï¿ Ïº┘ä┘üÏªÏ®"
+    },
+    "whatsappNumber": "+201000000000",
+    "featuredProducts": {
+        "source": {
+            "mode": "auto",
+            "limit": 8,
+            "source": "latest"
+        },
+        "enabled": false,
+        "headline": "┘à┘åÏ¬Ï¼ÏºÏ¬ ┘à┘à┘èÏ▓Ï®",
+        "viewAllLink": "/shop",
+        "viewAllLabel": "Ï╣Ï▒ÏÂ Ïº┘ä┘â┘ä",
+        "showWhatsappButton": true
+    }
+}

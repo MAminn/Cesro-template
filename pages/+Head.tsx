@@ -40,15 +40,20 @@ function getPinterestTagScript(tagId: string): string {
 export default function HeadDefault() {
   const pageContext = usePageContext();
   const pixelConfigs = pageContext.pixelConfigs ?? [];
-  const layoutSettings = pageContext.layoutSettingsData as LayoutSettings | undefined;
+  const layoutSettings = pageContext.layoutSettingsData as
+    | LayoutSettings
+    | undefined;
 
   // Dynamic favicon from layout settings
   const faviconUrl = layoutSettings?.faviconUrl || defaultFaviconUrl;
   const faviconType = layoutSettings?.faviconUrl
-    ? (layoutSettings.faviconUrl.endsWith(".svg") ? "image/svg+xml"
-      : layoutSettings.faviconUrl.endsWith(".png") ? "image/png"
-      : layoutSettings.faviconUrl.endsWith(".ico") ? "image/x-icon"
-      : "image/png")
+    ? layoutSettings.faviconUrl.endsWith(".svg")
+      ? "image/svg+xml"
+      : layoutSettings.faviconUrl.endsWith(".png")
+        ? "image/png"
+        : layoutSettings.faviconUrl.endsWith(".ico")
+          ? "image/x-icon"
+          : "image/png"
     : "image/svg+xml";
 
   // Dynamic document title from layout settings (client-side only)
@@ -71,7 +76,9 @@ export default function HeadDefault() {
   const ga4Pixels = pixelConfigs.filter((c) => c.platform === "google_ga4");
   const tiktokPixels = pixelConfigs.filter((c) => c.platform === "tiktok");
   const snapchatPixels = pixelConfigs.filter((c) => c.platform === "snapchat");
-  const pinterestPixels = pixelConfigs.filter((c) => c.platform === "pinterest");
+  const pinterestPixels = pixelConfigs.filter(
+    (c) => c.platform === "pinterest",
+  );
 
   return (
     <>
@@ -148,7 +155,9 @@ export default function HeadDefault() {
           key={`snapchat-pixel-${c.id}`}
           data-pixel-platform='snapchat'
           data-pixel-id={c.pixelId}
-          dangerouslySetInnerHTML={{ __html: getSnapchatPixelScript(c.pixelId) }}
+          dangerouslySetInnerHTML={{
+            __html: getSnapchatPixelScript(c.pixelId),
+          }}
         />
       ))}
       {pinterestPixels.map((c) => (

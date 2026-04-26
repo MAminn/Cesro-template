@@ -3,6 +3,11 @@ import { eq, and } from "drizzle-orm";
 import type { DatabaseClient } from "#root/shared/database/drizzle/db";
 import type { HomepageContent } from "#root/shared/types/homepage-content";
 import { DEFAULT_HOMEPAGE_CONTENT } from "#root/shared/types/homepage-content";
+import {
+  getTemplateDefaults,
+  hasCustomDefaults,
+  isCesroTemplate,
+} from "#root/shared/config/template-defaults";
 
 /**
  * Direct database query for SSR homepage content injection.
@@ -16,9 +21,10 @@ export async function getHomepageContentRaw(
   database: DatabaseClient,
   merchantId: string,
   templateId?: string,
-): Promise<HomepageContent> {
+): Promise<HomepageContent | Record<string, unknown>> {
   try {
     const resolvedTemplateId = templateId || "default";
+    const defaults = getTemplateDefaults(resolvedTemplateId);
 
     // Find content for the specific template
     const result = await database
@@ -34,8 +40,20 @@ export async function getHomepageContentRaw(
       .execute();
 
     if (result.length > 0 && result[0]?.content) {
-      const storedContent = result[0].content as unknown as HomepageContent;
-      return mergeWithDefaults(storedContent);
+      const storedContent = result[0].content as unknown;
+      // Cesro templates use their own shape — return raw JSON, no merging
+      if (isCesroTemplate(resolvedTemplateId)) {
+        return storedContent as Record<string, unknown>;
+      }
+      return mergeWithDefaults(
+        storedContent as Partial<HomepageContent>,
+        defaults as HomepageContent,
+      );
+    }
+
+    // Templates with their own defaults skip the legacy "default" row
+    if (hasCustomDefaults(resolvedTemplateId)) {
+      return defaults;
     }
 
     // If no template-specific content and this isn't already "default",
@@ -55,14 +73,14 @@ export async function getHomepageContentRaw(
 
       if (fallback.length > 0 && fallback[0]?.content) {
         const storedContent = fallback[0].content as unknown as HomepageContent;
-        return mergeWithDefaults(storedContent);
+        return mergeWithDefaults(storedContent, defaults);
       }
     }
 
-    return DEFAULT_HOMEPAGE_CONTENT;
+    return defaults;
   } catch {
     // SSR CMS injection is an enhancement — failures must not break page rendering
-    return DEFAULT_HOMEPAGE_CONTENT;
+    return getTemplateDefaults(templateId || "default");
   }
 }
 
@@ -83,61 +101,57 @@ function stripNulls<T>(obj: T): T {
 
 function mergeWithDefaults(
   storedContent: Partial<HomepageContent>,
+  defaults: HomepageContent,
 ): HomepageContent {
   const clean = stripNulls(storedContent);
   return {
     meta: {
-      ...DEFAULT_HOMEPAGE_CONTENT.meta,
+      ...defaults.meta,
       ...clean.meta,
     },
     hero: {
-      ...DEFAULT_HOMEPAGE_CONTENT.hero,
+      ...defaults.hero,
       ...clean.hero,
     },
     brandStatement: {
-      ...DEFAULT_HOMEPAGE_CONTENT.brandStatement,
+      ...defaults.brandStatement,
       ...clean.brandStatement,
     },
     promoBanner: {
-      ...DEFAULT_HOMEPAGE_CONTENT.promoBanner,
+      ...defaults.promoBanner,
       ...clean.promoBanner,
     },
     categories: {
-      ...DEFAULT_HOMEPAGE_CONTENT.categories,
+      ...defaults.categories,
       ...clean.categories,
     },
     featuredProducts: {
-      ...DEFAULT_HOMEPAGE_CONTENT.featuredProducts,
+      ...defaults.featuredProducts,
       ...clean.featuredProducts,
     },
     valueProps: {
-      ...DEFAULT_HOMEPAGE_CONTENT.valueProps,
+      ...defaults.valueProps,
       ...(clean.valueProps || {}),
-      items:
-        clean.valueProps?.items || DEFAULT_HOMEPAGE_CONTENT.valueProps.items,
+      items: clean.valueProps?.items || defaults.valueProps.items,
     },
     newsletter: {
-      ...DEFAULT_HOMEPAGE_CONTENT.newsletter,
+      ...defaults.newsletter,
       ...clean.newsletter,
     },
     footerCta: {
-      ...DEFAULT_HOMEPAGE_CONTENT.footerCta,
+      ...defaults.footerCta,
       ...clean.footerCta,
     },
-    discountedProducts:
-      clean.discountedProducts ?? DEFAULT_HOMEPAGE_CONTENT.discountedProducts,
-    newArrivals: clean.newArrivals ?? DEFAULT_HOMEPAGE_CONTENT.newArrivals,
-    marquee: clean.marquee ?? DEFAULT_HOMEPAGE_CONTENT.marquee,
-    promoLine: clean.promoLine ?? DEFAULT_HOMEPAGE_CONTENT.promoLine,
-    contactBanner:
-      clean.contactBanner ?? DEFAULT_HOMEPAGE_CONTENT.contactBanner,
-    bottomCarousel:
-      clean.bottomCarousel ?? DEFAULT_HOMEPAGE_CONTENT.bottomCarousel,
-    aboutUs:
-      clean.aboutUs ?? DEFAULT_HOMEPAGE_CONTENT.aboutUs,
+    discountedProducts: clean.discountedProducts ?? defaults.discountedProducts,
+    newArrivals: clean.newArrivals ?? defaults.newArrivals,
+    marquee: clean.marquee ?? defaults.marquee,
+    promoLine: clean.promoLine ?? defaults.promoLine,
+    contactBanner: clean.contactBanner ?? defaults.contactBanner,
+    bottomCarousel: clean.bottomCarousel ?? defaults.bottomCarousel,
+    aboutUs: clean.aboutUs ?? defaults.aboutUs,
     productCarouselTitle:
-      clean.productCarouselTitle ?? DEFAULT_HOMEPAGE_CONTENT.productCarouselTitle,
+      clean.productCarouselTitle ?? defaults.productCarouselTitle,
     productCarouselTitleAr:
-      clean.productCarouselTitleAr ?? DEFAULT_HOMEPAGE_CONTENT.productCarouselTitleAr,
+      clean.productCarouselTitleAr ?? defaults.productCarouselTitleAr,
   };
 }

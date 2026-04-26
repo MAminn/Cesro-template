@@ -1,7 +1,6 @@
 import { db } from "#root/shared/database/drizzle/db";
 import { homepageContent } from "#root/shared/database/drizzle/schema";
 import { eq, and } from "drizzle-orm";
-import type { HomepageContent } from "#root/shared/types/homepage-content";
 import { v7 as uuidv7 } from "uuid";
 
 /**
@@ -23,11 +22,16 @@ import { v7 as uuidv7 } from "uuid";
  */
 export async function updateHomepageContent(
   merchantId: string,
-  content: HomepageContent,
+  content: Record<string, unknown>,
   templateId: string = "default",
-): Promise<HomepageContent> {
+): Promise<Record<string, unknown>> {
   const database = db();
   const now = new Date();
+
+  console.log(
+    "[wire-debug] PRE-WRITE hero.primaryCta:",
+    JSON.stringify((content as any)?.hero?.primaryCta ?? {}),
+  );
 
   // Step 1: Try UPDATE first (most common case — row already exists)
   const updated = await database

@@ -2,148 +2,152 @@
  * Cesro Landing Template — Default Editable Content
  *
  * Arabic copy harvested from cesro/src/i18n/ar.ts (standalone prototype).
- * All strings live here; components receive them as props via HomepageContent.
+ * All strings live here; components receive them as props via CesroLandingContent.
  */
 
-import type { HomepageContent } from "#root/shared/types/homepage-content";
-import { ValuePropIconType } from "#root/shared/types/homepage-content";
+import type { CesroLandingContent } from "./content-schema";
 
-export const CESRO_DEFAULT_CONTENT: HomepageContent = {
+// Placeholder image paths — bundled under the cesro assets folder.
+// These are Unsplash-licensed images served as static assets via Vite.
+const heroBg = "/assets/cesro/hero-bg.jpg";
+const aboutSide = "/assets/cesro/about-side.jpg";
+const finalCtaBg = "/assets/cesro/final-cta-bg.jpg";
+
+// ── Canonical defaults: CesroLandingContent ─────────────────
+// Arabic copy verbatim from cesro/src/i18n/ar.ts unless noted.
+
+export const CESRO_DEFAULT_CONTENT: CesroLandingContent = {
+  /** Placeholder — deployers must set their real number */
+  whatsappNumber: "+201000000000",
+
   meta: {
-    enabled: true,
     pageTitle: "CESRO — جينز بالجملة في مصر",
     pageDescription:
       "مورّد جينز بالجملة في مصر — تشكيلة موديلات متنوعة بأسعار جملة تنافسية. تواصل معانا على واتساب.",
   },
+
   hero: {
     enabled: true,
     eyebrow: "مورّد جينز بالجملة في مصر",
-    title: "جينز بالجملة",
-    subtitle: "لكل مصر",
-    bodyText:
+    headlineLine1: "جينز بالجملة",
+    headlineLine2: "لكل مصر",
+    supportingText:
       "نوفّر لمحلات الملابس والتجّار تشكيلة جينز متنوعة بأسعار جملة تنافسية. تواصل معانا على واتساب — الرد فوري.",
-    ctaText: "تواصل واتساب",
-    ctaLink: "#whatsapp",
-    secondaryCtaText: "اطلب عرض أسعار",
-    secondaryCtaLink: "مرحبًا، أريد طلب عرض أسعار للجينز بالجملة",
-    badgeText: "رد سريع عبر واتساب بيزنس",
-    backgroundImage: undefined,
+    primaryCta: {
+      label: "تواصل واتساب",
+      whatsappMessage: "مرحبًا، أريد الاستفسار عن أسعار الجملة للجينز",
+    },
+    secondaryCta: {
+      label: "اطلب عرض أسعار",
+      whatsappMessage: "مرحبًا، أريد طلب عرض أسعار للجينز بالجملة",
+    },
+    presenceText: "رد سريع عبر واتساب بيزنس",
+    backgroundImage: heroBg,
     mobileBackgroundImage: undefined,
-    heroSlides: [],
   },
-  brandStatement: {
-    enabled: false,
-    title: "",
-    description: "",
-  },
-  promoBanner: {
-    enabled: false,
-    text: "",
-  },
+
   categories: {
-    enabled: true,
-    title: "تسوّق حسب الفئة",
-    titleAr: "تسوّق حسب الفئة",
-    subtitle: "",
-    ctaText: "عرض الكل",
-    ctaLink: "/shop",
+    enabled: false,
+    // Invented, not from client-approved i18n. Review before enabling in production.
+    headline: "تسوّق حسب الفئة",
+    source: { mode: "auto", source: "featured", limit: 6 },
   },
+
   featuredProducts: {
-    enabled: true,
-    title: "منتجات مميزة",
-    titleAr: "منتجات مميزة",
-    subtitle: "",
-    viewAllText: "عرض الكل",
-    viewAllTextAr: "عرض الكل",
+    enabled: false,
+    // Invented, not from client-approved i18n. Review before enabling in production.
+    headline: "منتجات مميزة",
+    viewAllLabel: "عرض الكل",
     viewAllLink: "/shop",
+    source: { mode: "auto", source: "latest", limit: 8 },
+    showWhatsappButton: true,
   },
-  valueProps: {
-    enabled: false,
-    items: [
-      {
-        icon: ValuePropIconType.QUALITY,
-        title: "تشكيلة موديلات",
-        description: "موديلات متنوعة تناسب كل الأذواق والأسواق",
-      },
-      {
-        icon: ValuePropIconType.SHOPPING,
-        title: "أسعار جملة",
-        description: "أسعار تنافسية للتجّار وأصحاب المحلات",
-      },
-      {
-        icon: ValuePropIconType.SHIPPING,
-        title: "توريد منتظم",
-        description: "بضاعة جاهزة وتوريد مستمر على مدار السنة",
-      },
-      {
-        icon: ValuePropIconType.SUPPORT,
-        title: "خدمة واتساب سريعة",
-        description: "تواصل مباشر ورد فوري على كل استفساراتك",
-      },
-    ],
-  },
-  newsletter: {
-    enabled: false,
-    title: "",
-    subtitle: "",
-    placeholderText: "",
-    ctaText: "",
-    privacyText: "",
-  },
-  footerCta: {
-    enabled: true,
-    eyebrow: "ابدأ دلوقتي",
-    title: "جاهز تطلب؟",
-    subtitle: "كلّمنا على واتساب",
-    bodyText:
-      "استفسارات، أسعار، كميات، موديلات متاحة — كل حاجة بنرد عليها فورًا على واتساب.",
-    ctaText: "تواصل على واتساب",
-    ctaLink: "مرحبًا، أريد الاستفسار عن الجينز بالجملة",
-    trustTags: ["رد فوري", "واتساب بيزنس", "بدون التزام"],
-    backgroundImage: undefined,
-  },
-  aboutUs: {
+
+  about: {
     enabled: true,
     eyebrow: "من نحن",
-    title: "مكتب جملة جينز",
-    titleAr: "مكتب جملة جينز",
-    subtitle: "في قلب مصر",
-    description:
+    headlineLine1: "مكتب جملة جينز",
+    headlineLine2: "في قلب مصر",
+    bodyParagraphs: [
       "نحن مكتب متخصص في توريد الجينز بالجملة لمحلات الملابس والتجّار في مصر. نوفّر بضاعة جاهزة بموديلات متنوعة وأسعار تنافسية تناسب السوق المصري.",
-    descriptionAr:
-      "نحن مكتب متخصص في توريد الجينز بالجملة لمحلات الملابس والتجّار في مصر. نوفّر بضاعة جاهزة بموديلات متنوعة وأسعار تنافسية تناسب السوق المصري.",
-    secondaryDescription:
       "شغلنا مبني على الثقة والاستمرارية — نشتغل مع محلات وتجّار في كل المحافظات ونوفّر خدمة سريعة ومباشرة عبر واتساب.",
-    imageUrl: "",
-    highlights: [
-      {
-        title: "تشكيلة موديلات",
-        description: "موديلات متنوعة تناسب كل الأذواق والأسواق",
-      },
-      {
-        title: "أسعار جملة",
-        description: "أسعار تنافسية للتجّار وأصحاب المحلات",
-      },
-      {
-        title: "توريد منتظم",
-        description: "بضاعة جاهزة وتوريد مستمر على مدار السنة",
-      },
-      {
-        title: "خدمة واتساب سريعة",
-        description: "تواصل مباشر ورد فوري على كل استفساراتك",
-      },
     ],
+    features: {
+      layout: "grid-2-col",
+      items: [
+        {
+          icon: "variety",
+          title: "تشكيلة موديلات",
+          description: "موديلات متنوعة تناسب كل الأذواق والأسواق",
+        },
+        {
+          icon: "wholesale",
+          title: "أسعار جملة",
+          description: "أسعار تنافسية للتجّار وأصحاب المحلات",
+        },
+        {
+          icon: "supply",
+          title: "توريد منتظم",
+          description: "بضاعة جاهزة وتوريد مستمر على مدار السنة",
+        },
+        {
+          icon: "whatsapp",
+          title: "خدمة واتساب سريعة",
+          description: "تواصل مباشر ورد فوري على كل استفساراتك",
+        },
+      ],
+    },
+    sideImage: aboutSide,
   },
-  discountedProducts: {
-    enabled: false,
-    title: "",
-    viewAllText: "",
-    viewAllLink: "/shop",
+
+  finalCta: {
+    enabled: true,
+    eyebrow: "ابدأ دلوقتي",
+    headlineLines: ["جاهز تطلب؟", "كلّمنا على واتساب"],
+    accentLineIndex: 1,
+    supportingText:
+      "استفسارات، أسعار، كميات، موديلات متاحة — كل حاجة بنرد عليها فورًا على واتساب.",
+    cta: {
+      label: "تواصل على واتساب",
+      whatsappMessage: "مرحبًا، أريد الاستفسار عن الجينز بالجملة",
+    },
+    trustItems: [
+      { label: "رد فوري", showDot: true },
+      { label: "واتساب بيزنس", showDot: false },
+      { label: "بدون التزام", showDot: false },
+    ],
+    backgroundImage: finalCtaBg,
   },
-  newArrivals: {
-    enabled: false,
-    title: "",
-    viewAllText: "",
-    viewAllLink: "/shop",
+
+  theme: {
+    primaryColor: "#F97316",
+    accentColor: "#25D366",
+    fontFamilyDisplay: "Cairo",
+    fontFamilyBody: "Cairo",
+    radius: { sm: "4px", md: "8px", lg: "16px" },
+    spacing: { sectionY: "6rem" },
   },
 };
+
+// ── Legacy shape (HomepageContent) ─────────────────────────
+// Used by LandingTemplateCesro.tsx and its sections until Phase 3.
+// DO NOT remove until renderers are migrated.
+// ── Dev-time schema validation ─────────────────────────────
+// Runs client-side only (Vite injects DEV=true). Server-side tsx runner
+// doesn't have import.meta.env so we guard with a try/catch.
+try {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (import.meta.env.DEV) {
+    import("./validators").then(({ cesroLandingContentSchema }) => {
+      const result = cesroLandingContentSchema.safeParse(CESRO_DEFAULT_CONTENT);
+      if (result.success) {
+        console.log("Cesro defaults valid");
+      } else {
+        console.error("Cesro defaults INVALID:", result.error.format());
+        throw new Error("CESRO_DEFAULT_CONTENT fails schema validation");
+      }
+    });
+  }
+} catch {
+  // Server-side (tsx): import.meta.env may not exist — skip validation
+}

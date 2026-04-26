@@ -387,15 +387,18 @@ export const DEFAULT_HOMEPAGE_CONTENT: HomepageContent = {
     slides: [],
     heading: "We Would Love To Hear From You",
     headingAr: "نود أن نسمع منك",
-    description: "Have a question, feedback, or just want to say hello? Drop us a message and we'll get back to you as soon as possible.",
-    descriptionAr: "هل لديك سؤال أو ملاحظة أو تريد فقط أن تقول مرحبا؟ أرسل لنا رسالة وسنعود إليك في أقرب وقت ممكن.",
+    description:
+      "Have a question, feedback, or just want to say hello? Drop us a message and we'll get back to you as soon as possible.",
+    descriptionAr:
+      "هل لديك سؤال أو ملاحظة أو تريد فقط أن تقول مرحبا؟ أرسل لنا رسالة وسنعود إليك في أقرب وقت ممكن.",
     directionsUrl: "",
   },
   aboutUs: {
     enabled: false,
     title: "About Us",
     titleAr: "من نحن",
-    description: "Welcome to our store. We are passionate about bringing you the finest products.",
+    description:
+      "Welcome to our store. We are passionate about bringing you the finest products.",
     descriptionAr: "",
     imageUrl: "",
   },

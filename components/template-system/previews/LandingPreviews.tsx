@@ -48,7 +48,11 @@ export function LandingMinimalPreview() {
 export function LandingCesroPreview() {
   return (
     <PreviewHost>
-      <LandingTemplateCesro content={CESRO_DEFAULT_CONTENT} />
+      <LandingTemplateCesro
+        content={CESRO_DEFAULT_CONTENT}
+        resolvedCategories={[]}
+        resolvedProducts={[]}
+      />
     </PreviewHost>
   );
 }

@@ -35,10 +35,7 @@ export function LandingTemplateCesro({
         theme={content.theme}
       />
       <CesroAbout content={content.about} />
-      <CesroCategories
-        content={content.categories}
-        categories={categories}
-      />
+      <CesroCategories content={content.categories} categories={categories} />
       <CesroFeaturedProducts
         content={content.featuredProducts}
         products={featuredProducts}

@@ -18,10 +18,7 @@ interface CesroCategoriesProps {
  * cesro-orange utilities (no arbitrary hex) so deployers can re-theme via
  * the @theme tokens in style.css.
  */
-export function CesroCategories({
-  content,
-  categories,
-}: CesroCategoriesProps) {
+export function CesroCategories({ content, categories }: CesroCategoriesProps) {
   if (!content.enabled) return null;
   if (categories.length === 0) return null;
 

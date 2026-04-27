@@ -1,5 +1,6 @@
 import type { CesroFeaturedProductsContent } from "../content-schema";
 import type { FeaturedProduct } from "#root/components/template-system/home/HomeFeaturedProducts";
+import { getProductUrl } from "#root/lib/utils/route-helpers";
 
 interface CesroFeaturedProductsProps {
   content: CesroFeaturedProductsContent;
@@ -81,7 +82,7 @@ export function CesroFeaturedProducts({
               : null;
             const hasDiscount = discountPrice != null && discountPrice < price;
 
-            const productHref = `/featured/products/${product.id}`;
+            const productHref = getProductUrl(product.id);
             const waMessage = encodeURIComponent(
               `مرحبًا، أريد الاستفسار عن المنتج: ${product.name}`,
             );

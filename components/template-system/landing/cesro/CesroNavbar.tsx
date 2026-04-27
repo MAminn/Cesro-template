@@ -1,6 +1,10 @@
 /**
+ * Currently unused. Cesro renders the global storefront Navbar
+ * (the same one Demos 1–4 use). Retained in case a per-template
+ * navbar variant is needed later (would be wired via
+ * layoutSettings.header.navbarStyle).
+ *
  * CesroNavbar — dark, minimal RTL navbar for the Cesro template.
- * Rendered inside CesroChrome; the global navbar is hidden.
  */
 export function CesroNavbar() {
   return (

@@ -49,17 +49,21 @@ export const CESRO_DEFAULT_CONTENT: CesroLandingContent = {
   categories: {
     enabled: false,
     // Invented, not from client-approved i18n. Review before enabling in production.
+    eyebrow: "مجموعاتنا",
     headline: "تسوّق حسب الفئة",
-    source: { mode: "auto", source: "featured", limit: 6 },
+    supportingText: "تشكيلة جينز متنوعة بأسعار جملة",
+    viewAllLabel: "عرض الكل",
+    viewAllLink: "/shop",
   },
 
   featuredProducts: {
     enabled: false,
     // Invented, not from client-approved i18n. Review before enabling in production.
+    eyebrow: "مختارات الموسم",
     headline: "منتجات مميزة",
+    supportingText: "أكثر الموديلات طلبًا من تجار الجملة",
     viewAllLabel: "عرض الكل",
     viewAllLink: "/shop",
-    source: { mode: "auto", source: "latest", limit: 8 },
     showWhatsappButton: true,
   },
 

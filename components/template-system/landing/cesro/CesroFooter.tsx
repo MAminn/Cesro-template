@@ -1,6 +1,9 @@
 /**
+ * Currently unused. Cesro renders the global storefront Footer
+ * (the same one Demos 1–4 use). Retained in case a per-template
+ * footer variant is needed later.
+ *
  * CesroFooter — minimal dark footer for the Cesro template.
- * Replaces the global footer (hidden by CesroChrome).
  */
 export function CesroFooter() {
   const year = new Date().getFullYear();

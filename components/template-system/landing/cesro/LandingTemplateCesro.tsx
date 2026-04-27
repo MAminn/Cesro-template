@@ -2,8 +2,6 @@ import type { CesroLandingContent } from "./content-schema";
 import type { FeaturedProduct } from "#root/components/template-system/home/HomeFeaturedProducts";
 import type { CategoryStripItem } from "#root/components/shop/CategoryStrip";
 import { CesroChrome } from "./CesroChrome";
-import { CesroNavbar } from "./CesroNavbar";
-import { CesroFooter } from "./CesroFooter";
 import { CesroHero } from "./sections/CesroHero";
 import { CesroCategories } from "./sections/CesroCategories";
 import { CesroFeaturedProducts } from "./sections/CesroFeaturedProducts";
@@ -12,44 +10,41 @@ import { CesroFinalCTA } from "./sections/CesroFinalCTA";
 
 export interface LandingTemplateCesroProps {
   content: CesroLandingContent;
-  resolvedCategories: CategoryStripItem[];
-  resolvedProducts: FeaturedProduct[];
+  categories: CategoryStripItem[];
+  featuredProducts: FeaturedProduct[];
 }
 
 /**
  * Demo 5: Cesro — Arabic RTL denim wholesale landing with WhatsApp CTAs.
  *
- * Wraps content in CesroChrome (sets dir="rtl", lang="ar", hides global
- * navbar/footer, applies scoped CSS variables via data-template="cesro").
+ * Cesro now uses the SAME global Navbar and Footer as Demos 1–4
+ * (rendered by LayoutDefault). CesroChrome remains as a pure theme
+ * wrapper that sets dir="rtl", lang="ar", and injects scoped CSS
+ * variables via data-template="cesro".
  */
 export function LandingTemplateCesro({
   content,
-  resolvedCategories,
-  resolvedProducts,
+  categories,
+  featuredProducts,
 }: LandingTemplateCesroProps) {
   return (
     <CesroChrome content={content}>
-      <CesroNavbar />
       <CesroHero
         content={content.hero}
         whatsappNumber={content.whatsappNumber}
         theme={content.theme}
       />
-      <CesroCategories
-        content={content.categories}
-        resolvedCategories={resolvedCategories}
-      />
+      <CesroAbout content={content.about} />
+      <CesroCategories content={content.categories} categories={categories} />
       <CesroFeaturedProducts
         content={content.featuredProducts}
-        resolvedProducts={resolvedProducts}
+        products={featuredProducts}
         whatsappNumber={content.whatsappNumber}
       />
-      <CesroAbout content={content.about} />
       <CesroFinalCTA
         content={content.finalCta}
         whatsappNumber={content.whatsappNumber}
       />
-      <CesroFooter />
     </CesroChrome>
   );
 }

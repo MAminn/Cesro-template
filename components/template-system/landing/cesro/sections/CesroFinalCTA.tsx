@@ -43,7 +43,7 @@ export function CesroFinalCTA({ content, whatsappNumber }: CesroFinalCTAProps) {
             </p>
           )}
 
-          <h2 className='text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold uppercase leading-[0.85] text-white mb-6 md:mb-8'>
+          <h2 className='text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black uppercase leading-[0.85] text-white mb-6 md:mb-8'>
             {content.headlineLines.map((line, idx) => (
               <span key={idx}>
                 {idx > 0 && <br />}

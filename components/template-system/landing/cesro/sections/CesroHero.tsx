@@ -30,11 +30,6 @@ export function CesroHero({ content, whatsappNumber }: CesroHeroProps) {
 
   return (
     <section className='relative w-full min-h-screen flex items-end overflow-hidden'>
-      {/* CESRO wordmark */}
-      <span className='absolute top-6 end-6 z-20 text-white font-bold text-xl tracking-[0.15em]'>
-        CESRO
-      </span>
-
       {/* Background image — desktop */}
       {bgImage && (
         <div

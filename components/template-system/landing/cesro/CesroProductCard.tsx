@@ -55,7 +55,7 @@ export function CesroProductCard({
           </div>
         )}
         {hasDiscount && (
-          <span className='absolute top-3 inset-s-3 bg-(--cesro-accent) text-white text-xs font-bold px-2 py-1 rounded-sm'>
+          <span className='absolute top-3 inset-s-3 bg-cesro-orange text-white text-xs font-bold px-2 py-1 rounded-sm'>
             تخفيض
           </span>
         )}
@@ -64,7 +64,7 @@ export function CesroProductCard({
       {/* Info */}
       <div className='p-4 flex flex-col gap-3 flex-1'>
         <a href={`/product/${product.id}`} className='block'>
-          <h3 className='text-(--cesro-fg) font-bold text-sm line-clamp-2 group-hover:text-(--cesro-accent) transition-colors'>
+          <h3 className='text-white font-bold text-sm line-clamp-2 group-hover:text-cesro-orange transition-colors'>
             {product.name}
           </h3>
         </a>
@@ -72,15 +72,15 @@ export function CesroProductCard({
         <div className='flex items-baseline gap-2 mt-auto'>
           {hasDiscount ? (
             <>
-              <span className='text-(--cesro-accent) font-bold text-lg'>
+              <span className='text-cesro-orange font-bold text-lg'>
                 {discountPrice.toFixed(0)} ج.م
               </span>
-              <span className='text-(--cesro-muted) line-through text-sm'>
+              <span className='text-white/40 line-through text-sm'>
                 {price.toFixed(0)} ج.م
               </span>
             </>
           ) : (
-            <span className='text-(--cesro-fg) font-bold text-lg'>
+            <span className='text-white font-bold text-lg'>
               {price.toFixed(0)} ج.م
             </span>
           )}

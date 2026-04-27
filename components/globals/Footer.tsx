@@ -286,7 +286,9 @@ export const Footer: FC<FooterProps> = ({
       <div className='container mx-auto px-6 md:px-12 lg:px-20 py-16 md:py-20'>
         <div className='grid grid-cols-1 md:grid-cols-12 gap-14 md:gap-8 lg:gap-12'>
           {/* Brand column — dominant */}
-          <div className='md:col-span-5 lg:col-span-5 space-y-7'>
+          <div
+            data-footer-brand
+            className='md:col-span-5 lg:col-span-5 space-y-7'>
             <FooterLogo textClassName='inline-block text-[26px] md:text-[28px] font-extralight tracking-[0.18em] text-[#DDD8C2] uppercase hover:opacity-70 transition-opacity duration-700' />
 
             {/* Subtle brand accent line */}
@@ -297,7 +299,7 @@ export const Footer: FC<FooterProps> = ({
             </p>
 
             {/* Social icons — larger, more spaced, opacity hover */}
-            <div className='flex items-center gap-7 pt-3'>
+            <div data-footer-social className='flex items-center gap-7 pt-3'>
               {effectiveSocialLinks.map((social) => (
                 <a
                   key={social.id}
@@ -317,7 +319,10 @@ export const Footer: FC<FooterProps> = ({
 
           {/* Nav columns */}
           {effectiveFooterLinks.map((column) => (
-            <div key={column.id} className='md:col-span-3 lg:col-span-2'>
+            <div
+              key={column.id}
+              data-footer-link-groups
+              className='md:col-span-3 lg:col-span-2'>
               <h4 className='text-[9px] md:text-[10px] uppercase tracking-[0.22em] text-[#8F7666] font-normal mb-7 md:mb-8'>
                 {column.title}
               </h4>
@@ -338,7 +343,7 @@ export const Footer: FC<FooterProps> = ({
       </div>
 
       {/* ── Bottom legal strip ── */}
-      <div className='border-t border-[#1E1B17]'>
+      <div data-footer-legal className='border-t border-[#1E1B17]'>
         <div className='container mx-auto px-6 md:px-12 lg:px-20 py-7 flex flex-col md:flex-row items-center justify-between gap-4'>
           <p className='text-[10px] text-[#3A3028] font-light tracking-[0.08em]'>
             &copy; {new Date().getFullYear()} {effectiveCopyright}

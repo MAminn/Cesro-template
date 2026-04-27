@@ -42,10 +42,6 @@ function Page() {
       ? (ssrData.homepageContent as CesroLandingContent)
       : CESRO_DEFAULT_CONTENT,
   );
-  const [cesroCategories, setCesroCategories] = useState<CategoryStripItem[]>(
-    [],
-  );
-  const [cesroProducts, setCesroProducts] = useState<FeaturedProduct[]>([]);
 
   // ── HomepageContent state (Demos 1–4) ─────────────────────
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProduct[]>(
@@ -167,89 +163,11 @@ function Page() {
   }, [activeLandingTemplateId]);
 
   // ───────────────────────────────────────────────────
-  // Cesro: resolve categories from CesroLandingContent.categories.source
+  // Cesro reuses the unified `categories` and `featuredProducts`
+  // state populated by the Demo 1–4 fetch effects below — no
+  // Cesro-specific catalog fetching is required (Phase 2
+  // consolidation: source-mode config dropped from Cesro schema).
   // ───────────────────────────────────────────────────
-  useEffect(() => {
-    if (!isCesro || !cesroContent.categories.enabled) return;
-
-    const src = cesroContent.categories.source;
-    trpc.category.view
-      .query()
-      .then((res) => {
-        if (!res.success || !res.result) return;
-        let items = res.result.filter((c: any) => !c.deleted);
-        if (src.mode === "manual" && src.ids?.length) {
-          const idSet = new Set(src.ids);
-          items = items.filter((c: any) => idSet.has(c.id));
-        } else if (src.source === "category" && src.categoryId) {
-          items = items.filter((c: any) => c.id === src.categoryId);
-        }
-        setCesroCategories(
-          items.slice(0, src.limit).map((c: any) => ({
-            id: c.id,
-            name: c.name,
-            slug: c.slug ?? c.id,
-            imageUrl: c.filename || null,
-          })),
-        );
-      })
-      .catch((err) => console.error("Error loading Cesro categories:", err));
-  }, [
-    isCesro,
-    cesroContent.categories.enabled,
-    cesroContent.categories.source,
-  ]);
-
-  // ───────────────────────────────────────────────────
-  // Cesro: resolve products from CesroLandingContent.featuredProducts.source
-  // ───────────────────────────────────────────────────
-  useEffect(() => {
-    if (!isCesro || !cesroContent.featuredProducts.enabled) return;
-
-    const src = cesroContent.featuredProducts.source;
-    const params: Record<string, any> = {
-      limit: src.limit,
-      includeOutOfStock: false,
-    };
-    if (src.mode === "manual" && src.ids?.length) {
-      params.productIds = src.ids;
-    } else if (src.source === "category" && src.categoryId) {
-      params.categoryId = src.categoryId;
-    } else if (src.source === "latest") {
-      params.sortBy = "newest";
-    }
-
-    trpc.product.search
-      .query(params)
-      .then((res) => {
-        if (!res.success || !res.result) return;
-        setCesroProducts(
-          res.result.items.map((item: any) => ({
-            id: item.id,
-            name: item.name,
-            price: Number(item.price),
-            discountPrice: item.discountPrice
-              ? Number(item.discountPrice)
-              : null,
-            stock: item.stock,
-            imageUrl: item.imageUrl
-              ? item.imageUrl.startsWith("http")
-                ? item.imageUrl
-                : `/uploads/${item.imageUrl}`
-              : undefined,
-            images: item.images,
-            categoryName: item.categoryName || "",
-            categories: item.categories,
-            available: item.stock > 0,
-          })),
-        );
-      })
-      .catch((err) => console.error("Error loading Cesro products:", err));
-  }, [
-    isCesro,
-    cesroContent.featuredProducts.enabled,
-    cesroContent.featuredProducts.source,
-  ]);
 
   // Fetch categories separately (parallel loading)
   useEffect(() => {
@@ -398,8 +316,8 @@ function Page() {
   if (isCesro) {
     const cesroProps: LandingTemplateCesroProps = {
       content: cesroContent,
-      resolvedCategories: cesroCategories,
-      resolvedProducts: cesroProducts,
+      categories: categories,
+      featuredProducts: featuredProducts,
     };
     return <Template {...(cesroProps as any)} />;
   }

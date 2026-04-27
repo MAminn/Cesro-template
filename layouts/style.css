@@ -431,17 +431,158 @@ html[data-editorial-chrome="true"] #global-footer {
   display: none !important;
 }
 
-/* Cesro chrome toggle — hide global footer and navbar when Cesro chrome is active */
-html[data-cesro-chrome="true"] #global-footer {
-  display: none !important;
-}
-html[data-cesro-chrome="true"] #global-navbar {
-  display: none !important;
-}
-
 /* Hide footer newsletter when the active template already renders its own */
 html[data-has-template-newsletter] [data-footer-newsletter] {
   display: none !important;
+}
+
+/* ===== CESRO FOOTER STYLING =====
+   Active when Demo 5 (Cesro) is the current landing template.
+   Transforms the shared global footer into a premium editorial
+   composition: oversized wordmark + muted description + circled
+   social icons, with a tight legal strip beneath. */
+
+/* Container */
+html[data-active-template="cesro"] footer {
+  background: #0b1f3a;
+  padding-block: 4rem 0;
+  border-top: 1px solid rgba(249, 115, 22, 0.18);
+  position: relative;
+}
+
+/* Hide blocks not relevant to Cesro */
+html[data-active-template="cesro"] [data-footer-newsletter],
+html[data-active-template="cesro"] [data-footer-link-groups] {
+  display: none !important;
+}
+
+/* Universal text color baseline */
+html[data-active-template="cesro"] footer,
+html[data-active-template="cesro"] footer * {
+  color: rgba(248, 250, 252, 0.85);
+}
+
+/* Tighten the inner main-row container's vertical padding —
+   the original py-16/py-20 leaves a giant void once link groups
+   are hidden. */
+html[data-active-template="cesro"] footer > div.container,
+html[data-active-template="cesro"] footer > div:has(> div.grid) {
+  padding-block: 0 2.5rem;
+}
+
+/* Neutralize the inner 12-col grid so the brand block fills the
+   row instead of being trapped at 5/12 width. */
+html[data-active-template="cesro"] footer .grid {
+  display: block;
+}
+
+/* === Brand block === */
+html[data-active-template="cesro"] [data-footer-brand] {
+  max-width: 56ch;
+  margin-inline: auto;
+  text-align: center;
+  opacity: 1;
+  font-size: inherit;
+}
+
+html[data-active-template="cesro"] [data-footer-brand] > * + * {
+  margin-block-start: 1.25rem;
+}
+
+/* Centered accent hairline */
+html[data-active-template="cesro"]
+  [data-footer-brand]
+  > div:not([data-footer-social]) {
+  margin-inline: auto;
+  background: rgba(249, 115, 22, 0.35) !important;
+  width: 2.5rem !important;
+}
+
+/* Wordmark — FooterLogo renders an <a> as the first child */
+html[data-active-template="cesro"] [data-footer-brand] > a:first-child,
+html[data-active-template="cesro"] [data-footer-brand] > a:first-child * {
+  font-size: 2.25rem !important;
+  line-height: 1.1 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.18em !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+}
+
+/* Description */
+html[data-active-template="cesro"] [data-footer-brand] p {
+  font-size: 0.875rem !important;
+  color: rgba(248, 250, 252, 0.6) !important;
+  line-height: 1.7 !important;
+  max-width: 42ch;
+  margin-inline: auto;
+}
+
+/* === Social icons row — circled outline buttons === */
+html[data-active-template="cesro"] [data-footer-social] {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.25rem;
+  padding-top: 0;
+}
+
+html[data-active-template="cesro"] [data-footer-social] a {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(248, 250, 252, 0.18);
+  border-radius: 9999px;
+  color: rgba(248, 250, 252, 0.7) !important;
+  opacity: 1 !important;
+  transition: all 0.2s ease;
+}
+
+html[data-active-template="cesro"] [data-footer-social] a svg {
+  width: 16px;
+  height: 16px;
+}
+
+html[data-active-template="cesro"] [data-footer-social] a:hover {
+  border-color: #f97316;
+  color: #f97316 !important;
+  background: rgba(249, 115, 22, 0.08);
+}
+
+/* === Legal strip === */
+html[data-active-template="cesro"] [data-footer-legal] {
+  border-top: 1px solid rgba(248, 250, 252, 0.08) !important;
+  margin-top: 0;
+}
+
+html[data-active-template="cesro"] [data-footer-legal] > div {
+  padding-block: 1.25rem !important;
+}
+
+html[data-active-template="cesro"] [data-footer-legal],
+html[data-active-template="cesro"] [data-footer-legal] p {
+  font-size: 0.75rem !important;
+  color: rgba(248, 250, 252, 0.45) !important;
+  letter-spacing: 0.04em !important;
+}
+
+html[data-active-template="cesro"] [data-footer-legal] a {
+  color: rgba(248, 250, 252, 0.55) !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.04em !important;
+  transition: color 0.2s ease;
+}
+
+html[data-active-template="cesro"] [data-footer-legal] a:hover {
+  color: #f97316 !important;
+}
+
+/* General link hover fallback */
+html[data-active-template="cesro"] footer a:hover {
+  color: #f97316;
 }
 
 /*

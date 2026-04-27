@@ -7,28 +7,43 @@ interface CesroChromeProps {
 }
 
 /**
- * CesroChrome — wraps the Cesro landing template.
+ * CesroChrome — pure theme/RTL wrapper for the Cesro landing template.
  *
- * 1. Sets `data-cesro-chrome="true"` on `<html>` (mount/unmount).
- *    Global CSS hides `#global-footer` and `#global-navbar` when set.
- * 2. Sets `dir="rtl"` and `lang="ar"` on `<html>`.
- * 3. Wraps content in a `data-template="cesro"` container with theme
+ * 1. Sets `dir="rtl"` and `lang="ar"` on `<html>` (mount/unmount).
+ * 2. Wraps content in a `data-template="cesro"` container with theme
  *    CSS custom properties injected from content.theme.
  *
+ * Cesro uses the SAME global Navbar/Footer as Demos 1–4 (rendered by
+ * LayoutDefault). This wrapper no longer hides the global chrome.
+ *
  * SSR-safe — attributes are set only in `useEffect` (client-only).
- * The blocking script in +Head.tsx handles flicker prevention.
+ * The blocking script in +Head.tsx handles dir/lang flicker prevention.
  */
 export function CesroChrome({ children, content }: CesroChromeProps) {
   useEffect(() => {
     const html = document.documentElement;
-    html.dataset.cesroChrome = "true";
     html.setAttribute("dir", "rtl");
     html.setAttribute("lang", "ar");
 
     return () => {
-      delete html.dataset.cesroChrome;
       html.setAttribute("dir", "ltr");
       html.setAttribute("lang", "en");
+    };
+  }, []);
+
+  // Mark the active template on <html> so global stylesheet rules
+  // (e.g. footer styling) can scope themselves to Cesro without
+  // needing a Cesro-specific Footer component.
+  useEffect(() => {
+    const html = document.documentElement;
+    const previous = html.dataset.activeTemplate;
+    html.dataset.activeTemplate = "cesro";
+    return () => {
+      if (previous === undefined) {
+        delete html.dataset.activeTemplate;
+      } else {
+        html.dataset.activeTemplate = previous;
+      }
     };
   }, []);
 

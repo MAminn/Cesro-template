@@ -50,8 +50,8 @@ export function LandingCesroPreview() {
     <PreviewHost>
       <LandingTemplateCesro
         content={CESRO_DEFAULT_CONTENT}
-        resolvedCategories={[]}
-        resolvedProducts={[]}
+        categories={[]}
+        featuredProducts={[]}
       />
     </PreviewHost>
   );

@@ -88,7 +88,7 @@ export default function HeadDefault() {
       {/* Blocking locale/dir sync — runs before first paint to prevent LTR→RTL flicker */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `(function(){try{var l=localStorage.getItem("minimal-template-locale");if(l==="ar"){document.documentElement.setAttribute("dir","rtl");document.documentElement.setAttribute("lang","ar")}if(l&&document.cookie.indexOf("minimal-locale=")===-1){document.cookie="minimal-locale="+l+";path=/;max-age=31536000;SameSite=Lax"}var sel=localStorage.getItem("template-selection-cache");if(sel){var p=JSON.parse(sel);if(p&&p.landing==="landing-cesro"){document.documentElement.setAttribute("dir","rtl");document.documentElement.setAttribute("lang","ar");document.documentElement.setAttribute("data-template","cesro");document.documentElement.setAttribute("data-cesro-chrome","true")}}}catch(e){}})();`,
+          __html: `(function(){try{var l=localStorage.getItem("minimal-template-locale");if(l==="ar"){document.documentElement.setAttribute("dir","rtl");document.documentElement.setAttribute("lang","ar")}if(l&&document.cookie.indexOf("minimal-locale=")===-1){document.cookie="minimal-locale="+l+";path=/;max-age=31536000;SameSite=Lax"}var sel=localStorage.getItem("template-selection-cache");if(sel){var p=JSON.parse(sel);if(p&&p.landing==="landing-cesro"){document.documentElement.setAttribute("dir","rtl");document.documentElement.setAttribute("lang","ar");document.documentElement.setAttribute("data-template","cesro")}}}catch(e){}})();`,
         }}
       />
 

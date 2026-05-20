@@ -109,7 +109,7 @@ export default function Page() {
 
         <div className='relative space-y-3'>
           <h1 className='text-[28px] md:text-[32px] text-center font-light tracking-[-0.02em] text-[#2B231D] leading-tight'>
-            Enter Percé
+            Enter Cesro
           </h1>
           <p className='text-center text-[13px] text-[#8B7E74] tracking-wide leading-relaxed'>
             Access your private atelier

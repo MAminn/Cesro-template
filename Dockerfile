@@ -32,12 +32,13 @@ ENV NODE_ENV=production
 # runtime via the #root path alias. Copy the whole built tree so every
 # referenced folder (pages, components, frontend, lib, layouts, hooks,
 # context, tsconfig.json, vite.config.ts, etc.) is present.
-COPY --from=builder /app ./
+# Use --chown during copy: `chown -R` over node_modules is extremely slow
+# and gets killed on managed builders (Coolify, etc.).
+COPY --from=builder --chown=node:node /app ./
 
-# Create uploads dir and drop root.
-RUN mkdir -p /app/uploads \
-    && chown -R node:node /app
+# Create uploads dir as the node user.
 USER node
+RUN mkdir -p /app/uploads
 
 EXPOSE 3000
 

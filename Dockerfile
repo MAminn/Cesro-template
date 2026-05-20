@@ -36,9 +36,12 @@ ENV NODE_ENV=production
 # and gets killed on managed builders (Coolify, etc.).
 COPY --from=builder --chown=node:node /app ./
 
-# Create uploads dir as the node user.
+# Create uploads dir while still root (WORKDIR /app is root-owned, so the
+# node user cannot mkdir inside it). Then hand both /app and the new dir
+# to the node user and drop privileges.
+RUN mkdir -p /app/uploads \
+    && chown node:node /app /app/uploads
 USER node
-RUN mkdir -p /app/uploads
 
 EXPOSE 3000
 

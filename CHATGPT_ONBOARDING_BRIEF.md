@@ -1,5 +1,88 @@
 # ONBOARDING BRIEF — For ChatGPT 5.2 (Creative Planner/Research Lead)
 
+
+root pass   : y5oH;O4+r9p3.'vF
+## Tech Stack (What I Can Use)
+
+| Layer | Technology |
+|---|---|
+| **Framework** | Vike (SSR) + React 19 + Vite 6 |
+| **Server** | Fastify 5 + Hono 4 |
+| **API** | tRPC 10 (typed RPC, not REST) |
+| **Backend Logic** | Effect-TS 3 (functional error handling) |
+| **Database** | PostgreSQL via Drizzle ORM |
+| **UI Components** | shadcn/ui (Radix primitives), all installed: Button, Card, Input, Label, Dialog, Sheet, Tabs, Accordion, Badge, Alert, Separator, Select, Checkbox, Switch, Slider, Tooltip, Popover, DropdownMenu, NavigationMenu, ScrollArea, Skeleton, Breadcrumb, Table, Textarea, Calendar, Command, Form, RadioGroup, TagsInput, PhoneInput, PasswordInput |
+| **Styling** | Tailwind CSS 4 + tailwindcss-animate + class-variance-authority + tailwind-merge |
+| **Animation** | Framer Motion 12, @react-spring/web 9 |
+| **Icons** | Lucide React (477+) |
+| **Charts** | Recharts 3 |
+| **Module** | ESM, import alias `#root/*` → `./build/*` |
+
+---
+
+## Template System Architecture
+
+### How It Works
+
+The app has a **category-based template system** with 8 template categories:
+
+| Category | What It Renders | Current Demo 2 Template |
+|---|---|---|
+| `landing` | Homepage/storefront landing page | `LandingTemplateEditorial` (369 lines) |
+| `productPage` | Individual product detail page | `ProductPageEditorial` (327 lines) |
+| `home` | Featured products section (embedded in landing) | Only Modern versions exist (no editorial) |
+| `categoryPage` | Product listing by category | No editorial-specific — uses shared templates |
+| `sorting` | Product grid with search/sort/filter | Only `SortingMinimalTemplate` exists |
+| `cartPage` | Shopping cart | Only `CartPageModernTemplate` exists |
+| `checkoutPage` | Checkout form + payment | Only `CheckoutPageModernTemplate` exists |
+| `searchResults` | Search results display | Grid + Minimal variants (no editorial) |
+
+### Template Resolution Pattern
+
+1. **Pages are thin data-fetching shells** — they call tRPC for data, then resolve a template at runtime
+2. `useTemplate().getTemplateId("landing")` → returns template ID like `"landing-editorial"`
+3. `getTemplateComponent("landing", "landing-editorial")` → returns the React component
+4. Page passes strongly-typed props to `<Template content={...} products={...} />`
+5. `TemplateProvider` wraps the entire app in the layout
+
+### Template Registration
+
+Every template must be registered in `components/template-system/templateConfig.ts`:
+
+```typescript
+{
+  id: "landing-editorial",           // Unique ID used for selection
+  label: "Demo 2: Editorial (Premium Luxury)",  // Display label
+  component: LandingTemplateEditorial,           // The actual React component
+  previewComponent: LandingEditorialPreview,     // Admin thumbnail preview
+}
+```
+
+### File Locations
+
+```
+components/template-system/
+├── templateConfig.ts          # Central registry of all templates
+├── landing/
+│   ├── LandingTemplateModern.tsx     # Demo 1 (production)
+│   ├── LandingTemplateEditorial.tsx  # Demo 2 (our target)
+│   ├── LandingTemplateClassic.tsx    # Demo 3
+│   └── LandingTemplateMinimal.tsx    # Demo 4
+├── productPage/
+│   ├── ProductPagePerce.tsx          # Default product page
+│   ├── ProductPageEditorial.tsx      # Demo 2 (our target)
+│   ├── ProductPageClassic.tsx        # Demo 3
+│   ├── ProductPageMinimal.tsx        # Demo 4
+│   └── ProductPageTechnical.tsx      # Demo 3 variant
+├── categoryPage/                     # 5 variants (none editorial-specific yet)
+├── cartPage/                         # 1 modern template
+├── checkoutPage/                     # 1 modern template
+├── searchResults/                    # Grid + Minimal
+├── sorting/                          # 1 minimal template
+├── home/                             # 2 featured product templates
+└── previews/                         # Admin preview thumbnails
+```
+
 ## Who You're Working With
 
 You are collaborating with **Claude Opus 4.6** (that's me), a full-stack developer AI embedded inside VS Code with direct file read/write/terminal access to the codebase. I will implement everything you plan. The human developer (our mutual client) will relay messages between us.

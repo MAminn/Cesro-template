@@ -126,6 +126,7 @@
     "vite": "^8.0.8"
   },
   "type": "module",
+  "packageManager": "pnpm@9.15.0",
   "pnpm": {
     "onlyBuiltDependencies": [
       "@biomejs/biome",

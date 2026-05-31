@@ -18,6 +18,8 @@ import {
 } from "#root/components/ui/table";
 import { Button } from "#root/components/ui/button";
 import { Input } from "#root/components/ui/input";
+import { Textarea } from "#root/components/ui/textarea";
+import { Label } from "#root/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -52,6 +54,8 @@ import {
   Eye,
   Loader2,
   Trash2,
+  Pencil,
+  X,
 } from "lucide-react";
 import { usePageContext } from "vike-react/usePageContext";
 import { trpc } from "#root/shared/trpc/client";
@@ -88,6 +92,28 @@ interface Order {
   items: OrderItem[];
 }
 
+interface EditItemDraft {
+  productId: string;
+  name: string;
+  quantity: number;
+  price: string;
+  discountPrice: string | null;
+}
+
+interface EditFormState {
+  orderId: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail: string;
+  shippingAddress: string;
+  shippingCity: string;
+  shippingState: string;
+  notes: string;
+  shipping: string;
+  discount: string;
+  items: EditItemDraft[];
+}
+
 export default function Orders() {
   const { clientSession } = usePageContext();
   const isAdmin = clientSession?.role === "admin";
@@ -98,6 +124,11 @@ export default function Orders() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  // ─── Edit order (admin) ──────────────────────────────────────────────
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [editForm, setEditForm] = useState<EditFormState | null>(null);
 
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -244,6 +275,7 @@ export default function Orders() {
         order.id.toLowerCase().includes(query) ||
         order.customerName.toLowerCase().includes(query) ||
         order.customerEmail.toLowerCase().includes(query) ||
+        order.customerPhone.toLowerCase().includes(query) ||
         order.items?.some((item) => item.name.toLowerCase().includes(query))
       );
     }
@@ -267,6 +299,160 @@ export default function Orders() {
     }
   };
 
+  // Wholesale-friendly status labels.
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "Pending Approval";
+      case "processing":
+        return "Accepted";
+      case "cancelled":
+        return "Cancelled";
+      case "shipped":
+        return "Shipped";
+      case "delivered":
+        return "Delivered";
+      default:
+        return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+  };
+
+  const openEditOrder = (order: Order) => {
+    setEditForm({
+      orderId: order.id,
+      customerName: order.customerName ?? "",
+      customerPhone: order.customerPhone ?? "",
+      customerEmail: order.customerEmail ?? "",
+      shippingAddress: order.shippingAddress ?? "",
+      shippingCity: order.shippingCity ?? "",
+      shippingState: order.shippingState ?? "",
+      notes: order.notes ?? "",
+      shipping: order.shipping ?? "0",
+      discount: order.discount ?? "",
+      items: (order.items ?? []).map((item) => ({
+        productId: item.productId,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        discountPrice: item.discountPrice ?? null,
+      })),
+    });
+    setIsEditOpen(true);
+  };
+
+  const updateEditItem = (
+    index: number,
+    field: keyof EditItemDraft,
+    value: string,
+  ) => {
+    setEditForm((prev) => {
+      if (!prev) return prev;
+      const items = [...prev.items];
+      const target = items[index];
+      if (!target) return prev;
+      if (field === "quantity") {
+        items[index] = { ...target, quantity: Math.max(1, Number(value) || 1) };
+      } else if (field === "price") {
+        items[index] = { ...target, price: value };
+      } else if (field === "discountPrice") {
+        items[index] = {
+          ...target,
+          discountPrice: value === "" ? null : value,
+        };
+      }
+      return { ...prev, items };
+    });
+  };
+
+  const removeEditItem = (index: number) => {
+    setEditForm((prev) => {
+      if (!prev) return prev;
+      return { ...prev, items: prev.items.filter((_, i) => i !== index) };
+    });
+  };
+
+  // Live total preview for the edit dialog (server still recalculates).
+  const editSubtotal = editForm
+    ? editForm.items.reduce((acc, item) => {
+        const unit =
+          item.discountPrice != null && item.discountPrice !== ""
+            ? Number.parseFloat(item.discountPrice)
+            : Number.parseFloat(item.price);
+        return acc + (Number.isFinite(unit) ? unit : 0) * item.quantity;
+      }, 0)
+    : 0;
+  const editDiscountNum =
+    editForm && editForm.discount
+      ? Number.parseFloat(editForm.discount) || 0
+      : 0;
+  const editShippingNum =
+    editForm && editForm.shipping
+      ? Number.parseFloat(editForm.shipping) || 0
+      : 0;
+  const editTotal =
+    Math.max(0, editSubtotal - editDiscountNum) + editShippingNum;
+
+  const handleSaveEdit = async () => {
+    if (!editForm) return;
+    if (editForm.items.length === 0) {
+      toast({
+        title: "Cannot save",
+        description: "An order must have at least one item.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const result = await trpc.order.updateOrder.mutate({
+        orderId: editForm.orderId,
+        customerName: editForm.customerName,
+        customerPhone: editForm.customerPhone,
+        customerEmail: editForm.customerEmail || "",
+        shippingAddress: editForm.shippingAddress,
+        shippingCity: editForm.shippingCity,
+        shippingState: editForm.shippingState,
+        notes: editForm.notes,
+        shipping: Number.parseFloat(editForm.shipping) || 0,
+        discount: editForm.discount
+          ? Number.parseFloat(editForm.discount) || 0
+          : 0,
+        items: editForm.items.map((item) => ({
+          productId: item.productId,
+          quantity: item.quantity,
+          price: Number.parseFloat(item.price) || 0,
+          discountPrice:
+            item.discountPrice != null && item.discountPrice !== ""
+              ? Number.parseFloat(item.discountPrice)
+              : null,
+          name: item.name,
+        })),
+      });
+
+      if (result.success) {
+        toast({ title: "Order Updated" });
+        setIsEditOpen(false);
+        setIsDetailsOpen(false);
+        fetchOrders();
+      } else {
+        toast({
+          title: "Update Failed",
+          description: result.error || "Could not update the order.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred while saving.",
+        variant: "destructive",
+      });
+      console.error("Edit order error:", err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleString();
   };
@@ -282,10 +468,10 @@ export default function Orders() {
         <div className='flex justify-center lg:justify-between items-center flex-wrap gap-2'>
           <div>
             <h1 className='text-2xl font-bold tracking-tight text-center lg:text-left'>
-              Orders
+              Wholesale Sales Orders
             </h1>
             <p className='text-muted-foreground text-center lg:text-left'>
-              Track and manage your store's orders
+              Review and approve sales orders created for shops / clients
             </p>
           </div>
         </div>
@@ -296,7 +482,7 @@ export default function Orders() {
               <div className='flex items-center gap-2 w-full md:w-1/3'>
                 <Search className='h-4 w-4 text-muted-foreground' />
                 <Input
-                  placeholder='Search orders...'
+                  placeholder='Search by shop, client, phone, order...'
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className='h-9'
@@ -311,8 +497,8 @@ export default function Orders() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value='all'>All Statuses</SelectItem>
-                      <SelectItem value='pending'>Pending</SelectItem>
-                      <SelectItem value='processing'>Processing</SelectItem>
+                      <SelectItem value='pending'>Pending Approval</SelectItem>
+                      <SelectItem value='processing'>Accepted</SelectItem>
                       <SelectItem value='shipped'>Shipped</SelectItem>
                       <SelectItem value='delivered'>Delivered</SelectItem>
                       <SelectItem value='cancelled'>Cancelled</SelectItem>
@@ -357,7 +543,8 @@ export default function Orders() {
                     <TableRow>
                       <TableHead>Order ID</TableHead>
                       <TableHead>Date</TableHead>
-                      <TableHead>Customer</TableHead>
+                      <TableHead>Shop / Client</TableHead>
+                      <TableHead>Phone</TableHead>
                       <TableHead>Items</TableHead>
                       <TableHead>Total</TableHead>
                       <TableHead>Status</TableHead>
@@ -372,6 +559,7 @@ export default function Orders() {
                         </TableCell>
                         <TableCell>{formatDate(order.createdAt)}</TableCell>
                         <TableCell>{order.customerName}</TableCell>
+                        <TableCell>{order.customerPhone}</TableCell>
                         <TableCell>{order.items?.length || 0}</TableCell>
                         <TableCell>
                           {Number.parseFloat(order.total).toFixed(2)} EGP
@@ -390,8 +578,7 @@ export default function Orders() {
                           <Badge
                             variant='outline'
                             className={getStatusColor(order.status)}>
-                            {order.status.charAt(0).toUpperCase() +
-                              order.status.slice(1)}
+                            {getStatusLabel(order.status)}
                           </Badge>
                         </TableCell>
                         <TableCell className='text-right'>
@@ -447,11 +634,11 @@ export default function Orders() {
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4 my-4'>
                   <div>
                     <h3 className='font-medium text-sm mb-2'>
-                      Customer Information
+                      Shop / Client Information
                     </h3>
                     <div className='space-y-1 text-sm'>
                       <p>
-                        <span className='font-medium'>Name:</span>{" "}
+                        <span className='font-medium'>Shop / Client:</span>{" "}
                         {selectedOrder.customerName}
                       </p>
                       <p>
@@ -545,11 +732,49 @@ export default function Orders() {
                 <div className='flex justify-between items-start my-4'>
                   <div>
                     <h3 className='font-medium text-sm mb-2'>Order Status</h3>
-                    <div className='flex items-center gap-3'>
+                    <div className='flex flex-col gap-3'>
                       <Badge className={getStatusColor(selectedOrder.status)}>
-                        {selectedOrder.status.charAt(0).toUpperCase() +
-                          selectedOrder.status.slice(1)}
+                        {getStatusLabel(selectedOrder.status)}
                       </Badge>
+
+                      {isAdmin && (
+                        <div className='flex flex-wrap items-center gap-2'>
+                          <Button
+                            size='sm'
+                            className='bg-green-600 hover:bg-green-700 text-white'
+                            disabled={
+                              isUpdating ||
+                              selectedOrder.status === "processing"
+                            }
+                            onClick={() =>
+                              updateOrderStatus(selectedOrder.id, "processing")
+                            }>
+                            Accept Order
+                          </Button>
+                          <Button
+                            size='sm'
+                            variant='outline'
+                            disabled={
+                              isUpdating || selectedOrder.status === "pending"
+                            }
+                            onClick={() =>
+                              updateOrderStatus(selectedOrder.id, "pending")
+                            }>
+                            Keep Pending
+                          </Button>
+                          <Button
+                            size='sm'
+                            variant='destructive'
+                            disabled={
+                              isUpdating || selectedOrder.status === "cancelled"
+                            }
+                            onClick={() =>
+                              updateOrderStatus(selectedOrder.id, "cancelled")
+                            }>
+                            Cancel Order
+                          </Button>
+                        </div>
+                      )}
 
                       {isAdmin && (
                         <Select
@@ -557,14 +782,14 @@ export default function Orders() {
                           onValueChange={(value) =>
                             updateOrderStatus(selectedOrder.id, value)
                           }>
-                          <SelectTrigger className='h-8 w-[160px]'>
-                            <SelectValue placeholder='Update status' />
+                          <SelectTrigger className='h-8 w-[200px]'>
+                            <SelectValue placeholder='More status options' />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value='pending'>Pending</SelectItem>
-                            <SelectItem value='processing'>
-                              Processing
+                            <SelectItem value='pending'>
+                              Pending Approval
                             </SelectItem>
+                            <SelectItem value='processing'>Accepted</SelectItem>
                             <SelectItem value='shipped'>Shipped</SelectItem>
                             <SelectItem value='delivered'>Delivered</SelectItem>
                             <SelectItem value='cancelled'>Cancelled</SelectItem>
@@ -630,10 +855,256 @@ export default function Orders() {
                 )}
 
                 <DialogFooter>
+                  {isAdmin && (
+                    <Button
+                      variant='secondary'
+                      onClick={() => openEditOrder(selectedOrder)}>
+                      <Pencil className='mr-2 h-4 w-4' />
+                      Edit Order
+                    </Button>
+                  )}
                   <Button
                     variant='outline'
                     onClick={() => setIsDetailsOpen(false)}>
                     Close
+                  </Button>
+                </DialogFooter>
+              </>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+          <DialogContent className='max-w-3xl max-h-[90vh] overflow-y-auto'>
+            {editForm && (
+              <>
+                <DialogHeader>
+                  <DialogTitle>Edit Wholesale Order</DialogTitle>
+                  <DialogDescription>
+                    Order ID: {editForm.orderId}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 my-4'>
+                  <div className='space-y-1'>
+                    <Label>Shop / Client Name</Label>
+                    <Input
+                      value={editForm.customerName}
+                      onChange={(e) =>
+                        setEditForm((prev) =>
+                          prev
+                            ? { ...prev, customerName: e.target.value }
+                            : prev,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className='space-y-1'>
+                    <Label>Shop Phone</Label>
+                    <Input
+                      value={editForm.customerPhone}
+                      onChange={(e) =>
+                        setEditForm((prev) =>
+                          prev
+                            ? { ...prev, customerPhone: e.target.value }
+                            : prev,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className='space-y-1'>
+                    <Label>Email (optional)</Label>
+                    <Input
+                      value={editForm.customerEmail}
+                      onChange={(e) =>
+                        setEditForm((prev) =>
+                          prev
+                            ? { ...prev, customerEmail: e.target.value }
+                            : prev,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className='space-y-1'>
+                    <Label>City</Label>
+                    <Input
+                      value={editForm.shippingCity}
+                      onChange={(e) =>
+                        setEditForm((prev) =>
+                          prev
+                            ? { ...prev, shippingCity: e.target.value }
+                            : prev,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className='space-y-1 md:col-span-2'>
+                    <Label>Shop Address</Label>
+                    <Input
+                      value={editForm.shippingAddress}
+                      onChange={(e) =>
+                        setEditForm((prev) =>
+                          prev
+                            ? { ...prev, shippingAddress: e.target.value }
+                            : prev,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className='space-y-1 md:col-span-2'>
+                    <Label>Sales Notes</Label>
+                    <Textarea
+                      value={editForm.notes}
+                      onChange={(e) =>
+                        setEditForm((prev) =>
+                          prev ? { ...prev, notes: e.target.value } : prev,
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className='my-4'>
+                  <h3 className='font-medium text-sm mb-2'>Order Items</h3>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Product</TableHead>
+                        <TableHead className='w-[110px]'>Quantity</TableHead>
+                        <TableHead className='w-[120px]'>Price</TableHead>
+                        <TableHead className='w-[130px]'>
+                          Discount Price
+                        </TableHead>
+                        <TableHead className='w-[60px]' />
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {editForm.items.map((item, index) => (
+                        <TableRow key={`${item.productId}-${index}`}>
+                          <TableCell>{item.name}</TableCell>
+                          <TableCell>
+                            <Input
+                              type='number'
+                              min={1}
+                              value={item.quantity}
+                              onChange={(e) =>
+                                updateEditItem(
+                                  index,
+                                  "quantity",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type='number'
+                              min={0}
+                              step='0.01'
+                              value={item.price}
+                              onChange={(e) =>
+                                updateEditItem(index, "price", e.target.value)
+                              }
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              type='number'
+                              min={0}
+                              step='0.01'
+                              placeholder='—'
+                              value={item.discountPrice ?? ""}
+                              onChange={(e) =>
+                                updateEditItem(
+                                  index,
+                                  "discountPrice",
+                                  e.target.value,
+                                )
+                              }
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant='ghost'
+                              size='sm'
+                              onClick={() => removeEditItem(index)}
+                              disabled={editForm.items.length <= 1}>
+                              <X className='h-4 w-4' />
+                              <span className='sr-only'>Remove item</span>
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 my-4'>
+                  <div className='space-y-1'>
+                    <Label>Shipping</Label>
+                    <Input
+                      type='number'
+                      min={0}
+                      step='0.01'
+                      value={editForm.shipping}
+                      onChange={(e) =>
+                        setEditForm((prev) =>
+                          prev ? { ...prev, shipping: e.target.value } : prev,
+                        )
+                      }
+                    />
+                  </div>
+                  <div className='space-y-1'>
+                    <Label>Discount</Label>
+                    <Input
+                      type='number'
+                      min={0}
+                      step='0.01'
+                      value={editForm.discount}
+                      onChange={(e) =>
+                        setEditForm((prev) =>
+                          prev ? { ...prev, discount: e.target.value } : prev,
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className='text-right space-y-1 text-sm border-t pt-4'>
+                  <div className='flex justify-between'>
+                    <span className='font-medium'>Subtotal:</span>
+                    <span>{editSubtotal.toFixed(2)} EGP</span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span className='font-medium'>Discount:</span>
+                    <span>-{editDiscountNum.toFixed(2)} EGP</span>
+                  </div>
+                  <div className='flex justify-between'>
+                    <span className='font-medium'>Shipping:</span>
+                    <span>{editShippingNum.toFixed(2)} EGP</span>
+                  </div>
+                  <div className='flex justify-between font-bold'>
+                    <span>Total:</span>
+                    <span>{editTotal.toFixed(2)} EGP</span>
+                  </div>
+                  <p className='text-xs text-muted-foreground'>
+                    Totals are recalculated and verified on the server when
+                    saved.
+                  </p>
+                </div>
+
+                <DialogFooter>
+                  <Button
+                    variant='outline'
+                    onClick={() => setIsEditOpen(false)}
+                    disabled={isSaving}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleSaveEdit} disabled={isSaving}>
+                    {isSaving ? (
+                      <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                    ) : null}
+                    Save Changes
                   </Button>
                 </DialogFooter>
               </>

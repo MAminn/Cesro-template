@@ -104,6 +104,31 @@ export const login = (email: string, password: string) =>
       );
     }
 
+    // Block deactivated accounts from logging in.
+    if (user.isActive === false) {
+      yield* $(
+        query(async (db) => {
+          await db.insert(Tables.authLog).values({
+            userId: user.id,
+            email: user.email,
+            action: "login_failed",
+            errorMessage: "Account deactivated",
+          });
+        }),
+      );
+
+      return yield* $(
+        Effect.fail(
+          new ServerError({
+            tag: "AccountDeactivated",
+            statusCode: 403,
+            clientMessage:
+              "This account has been deactivated. Please contact an administrator.",
+          }),
+        ),
+      );
+    }
+
     // If user is not verified, check if they're admin
     if (!user.emailVerified) {
       if (user.role === "admin") {

@@ -37,13 +37,13 @@ export const getOrderStats = (
       );
     }
 
-    if (session.role !== "admin") {
+    if (session.role !== "admin" && session.role !== "accountant") {
       return yield* $(
         Effect.fail(
           new ServerError({
             tag: "Forbidden",
             statusCode: 403,
-            clientMessage: "Admin access required",
+            clientMessage: "Admin or accountant access required",
           }),
         ),
       );

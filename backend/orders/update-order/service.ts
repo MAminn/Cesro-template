@@ -64,14 +64,14 @@ export const updateOrder = (
       );
     }
 
-    if (session.role !== "admin") {
+    if (session.role !== "admin" && session.role !== "accountant") {
       return yield* $(
         Effect.fail(
           new ServerError({
             tag: "Forbidden",
-            message: "Admin access required",
+            message: "Staff access required",
             statusCode: 403,
-            clientMessage: "Admin access required",
+            clientMessage: "Admin or accountant access required",
           }),
         ),
       );

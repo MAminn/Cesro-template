@@ -96,6 +96,12 @@ export function DashboardSidebar() {
       icon: Radio,
     },
     {
+      label: "Accounts",
+      href: "/dashboard/admin/accounts",
+      icon: UserPlus,
+      adminOnly: true,
+    },
+    {
       label: "Links Page",
       href: "/dashboard/settings/links",
       icon: Link2,
@@ -126,7 +132,13 @@ export function DashboardSidebar() {
   ];
 
   const sideBarItems =
-    userRole === "admin" ? adminSidebarItems : defaultSidebarItems;
+    userRole === "admin"
+      ? adminSidebarItems
+      : userRole === "accountant"
+        ? adminSidebarItems.filter(
+            (item) => !("adminOnly" in item && item.adminOnly),
+          )
+        : defaultSidebarItems;
 
   return (
     <Sidebar collapsible='icon' className='h-full border-none'>

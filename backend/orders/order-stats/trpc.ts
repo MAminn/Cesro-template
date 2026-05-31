@@ -6,15 +6,15 @@ import { DatabaseClientService } from "#root/shared/database/drizzle/db";
 import { Effect } from "effect";
 import { z } from "zod";
 import { getOrderStats, getOrderStatsSchema } from "./service";
-import { adminProcedure } from "#root/shared/trpc/server";
+import { managementProcedure } from "#root/shared/trpc/server";
 
-export const orderStatsProcedure = adminProcedure
+export const orderStatsProcedure = managementProcedure
   .input(getOrderStatsSchema)
   .query(async ({ input, ctx }) => {
     const result = await runBackendEffect(
       getOrderStats(input, ctx.clientSession).pipe(
-        Effect.provideService(DatabaseClientService, ctx.db)
-      )
+        Effect.provideService(DatabaseClientService, ctx.db),
+      ),
     ).then(serializeBackendEffectResult);
 
     return result;

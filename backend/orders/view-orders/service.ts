@@ -1,9 +1,5 @@
 import { query } from "#root/shared/database/drizzle/db";
-import {
-  order,
-  orderItem,
-  user,
-} from "#root/shared/database/drizzle/schema";
+import { order, orderItem, user } from "#root/shared/database/drizzle/schema";
 import { and, desc, eq, inArray, type SQL } from "drizzle-orm";
 import { Effect } from "effect";
 import { z } from "zod";
@@ -40,7 +36,7 @@ export const viewOrders = (
     // No special authentication needed beyond session check
 
     const { limit, offset, status } = input;
-    const isAdmin = session.role === "admin";
+    const isStaff = session.role === "admin" || session.role === "accountant";
 
     return yield* $(
       query(async (db) => {
@@ -51,8 +47,9 @@ export const viewOrders = (
             conditions.push(eq(order.status, status));
           }
 
-          // Users (non-admins) only see their own orders
-          if (!isAdmin) {
+          // Staff (admin / accountant) see all orders. Everyone else
+          // (sales, customers) only sees the orders they created.
+          if (!isStaff) {
             const userResult = await tx
               .select({ id: user.id })
               .from(user)

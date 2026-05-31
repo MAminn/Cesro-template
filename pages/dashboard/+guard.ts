@@ -6,13 +6,20 @@ export async function guard(pageContext: Vike.PageContext) {
     throw redirect("/login");
   }
 
-  // In single-shop mode, only admins can access dashboard
-  if (isSingleShopMode() && pageContext.clientSession.role !== "admin") {
+  const role = pageContext.clientSession.role;
+
+  // Sales staff have their own dedicated wholesale order flow.
+  if (role === "sales") {
+    throw redirect("/sales/orders/new");
+  }
+
+  // In single-shop mode, only admins and accountants can access the dashboard.
+  if (isSingleShopMode() && role !== "admin" && role !== "accountant") {
     throw redirect("/");
   }
 
   // In multi-vendor mode, redirect users with 'user' role to the homepage
-  if (!isSingleShopMode() && pageContext.clientSession.role === "user") {
+  if (!isSingleShopMode() && role === "user") {
     throw redirect("/");
   }
 }

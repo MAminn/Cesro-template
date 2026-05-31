@@ -12,7 +12,13 @@ import {
 } from "drizzle-orm/pg-core";
 import { v7 } from "uuid";
 
-export const userRole = pgEnum("user_role", ["admin", "vendor", "user"]);
+export const userRole = pgEnum("user_role", [
+  "admin",
+  "accountant",
+  "sales",
+  "vendor",
+  "user",
+]);
 
 export const user = pgTable("user", {
   id: uuid("id")
@@ -27,6 +33,7 @@ export const user = pgTable("user", {
     onUpdate: "cascade",
   }),
   role: userRole("role").notNull().default("user"),
+  isActive: boolean("is_active").notNull().default(true),
   emailVerified: boolean("email_verified").notNull().default(false),
   verificationToken: text("verification_token"),
   verificationExpiry: timestamp("verification_expiry", {

@@ -57,6 +57,9 @@ function Content({ children }: { children: React.ReactNode }) {
     if (pathname.includes("/dashboard/admin/pixels")) {
       return "pixels";
     }
+    if (pathname.includes("/dashboard/admin/accounts")) {
+      return "accounts";
+    }
     if (pathname.includes("/dashboard/settings")) {
       return "settings";
     }
@@ -70,7 +73,7 @@ function Content({ children }: { children: React.ReactNode }) {
       label: "Overview",
       href: "/dashboard",
     },
-    ...(userRole === "admin"
+    ...(userRole === "admin" || userRole === "accountant"
       ? [
           {
             label: "Categories",
@@ -91,6 +94,14 @@ function Content({ children }: { children: React.ReactNode }) {
           {
             label: "Settings",
             href: "/dashboard/settings",
+          },
+        ]
+      : []),
+    ...(userRole === "admin"
+      ? [
+          {
+            label: "Accounts",
+            href: "/dashboard/admin/accounts",
           },
         ]
       : []),

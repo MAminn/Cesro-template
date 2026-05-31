@@ -101,6 +101,21 @@ export function validateSessionToken(token: string) {
 
     const { user, session } = result[0];
 
+    // Reject deactivated accounts.
+    if (user.isActive === false) {
+      return yield* $(
+        Effect.fail(
+          new ServerError({
+            tag: "AccountDeactivated",
+            statusCode: 403,
+            clientMessage:
+              "This account has been deactivated. Please contact an administrator.",
+            message: `User ${user.id} attempted to use a session for a deactivated account`,
+          }),
+        ),
+      );
+    }
+
     // Check email verification (except for admins)
     if (!user.emailVerified && user.role !== "admin") {
       return yield* $(
@@ -156,7 +171,7 @@ export function validateSessionToken(token: string) {
       name: user.name,
       phone: user.phone,
       expiresAt: session.expiresAt,
-      role: user.role as "admin" | "user", // Single-shop: Only admin and user roles
+      role: user.role as "admin" | "accountant" | "sales" | "user",
     } satisfies SessionValidationResult;
   });
 }

@@ -46,10 +46,10 @@ export const updateOrderStatus = (
     }
 
     const { orderId, status } = input;
-    const isAdmin = session.role === "admin";
+    const isStaff = session.role === "admin" || session.role === "accountant";
 
-    // Only admins can update orders
-    if (!isAdmin) {
+    // Only admins and accountants can update orders
+    if (!isStaff) {
       return yield* $(
         Effect.fail(
           new ServerError({

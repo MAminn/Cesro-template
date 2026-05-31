@@ -30,7 +30,8 @@ const OrderItemSchema = z.object({
 
 export const createOrderSchema = z.object({
   customerName: z.string().min(1),
-  customerEmail: z.string().email(),
+  // Wholesale flow: email is optional (the "customer" is a shop/client).
+  customerEmail: z.string().email().optional().or(z.literal("")),
   customerPhone: z.string().min(1),
   shippingAddress: z.string().min(1),
   shippingCity: z.string().min(1),
@@ -40,6 +41,7 @@ export const createOrderSchema = z.object({
   items: z.array(OrderItemSchema).min(1),
   notes: z.string().optional(),
   promoCodeId: z.string().uuid().optional(),
+  // Kept for compatibility, but wholesale orders are always created as COD/manual.
   paymentMethod: z.enum(["cod", "stripe", "paymob"]).optional().default("cod"),
 });
 
@@ -297,6 +299,9 @@ export const createOrder = (
             });
           }
 
+          // Wholesale intake: validate that products exist, but do NOT block on
+          // stock and do NOT deduct stock at creation time. Stock is validated
+          // and deducted only when an admin approves (accepts) the order.
           for (const item of input.items) {
             const productData = products.find((p) => p.id === item.productId);
             if (!productData) {
@@ -305,15 +310,6 @@ export const createOrder = (
                 message: `Product with ID ${item.productId} not found`,
                 statusCode: 404,
                 clientMessage: "Some products in your order could not be found",
-              });
-            }
-
-            if (productData.stock < item.quantity) {
-              throw new ServerError({
-                tag: "InsufficientStock",
-                message: `Insufficient stock for product ${productData.name}`,
-                statusCode: 400,
-                clientMessage: `Sorry, there's not enough stock available for ${productData.name}`,
               });
             }
           }
@@ -435,20 +431,18 @@ export const createOrder = (
           // Ensure shipping is included in the total (no tax)
           const total = discountedSubtotal + shipping;
 
-          // Only include fields directly provided or calculated
-          const isOnlinePayment =
-            input.paymentMethod === "stripe" ||
-            input.paymentMethod === "paymob";
+          // Only include fields directly provided or calculated.
+          // Wholesale flow: always created as COD / manual payment.
           const insertData = {
             userId: userId,
             customerName: input.customerName,
-            customerEmail: input.customerEmail,
+            customerEmail: input.customerEmail || "",
             customerPhone: input.customerPhone,
             shippingAddress: input.shippingAddress,
             shippingCity: input.shippingCity,
-            shippingState: input.shippingState,
-            shippingPostalCode: input.shippingPostalCode,
-            shippingCountry: input.shippingCountry,
+            shippingState: input.shippingState ?? "",
+            shippingPostalCode: input.shippingPostalCode ?? "",
+            shippingCountry: input.shippingCountry ?? "",
             subtotal: subtotal.toString(),
             discount: discount > 0 ? discount.toString() : null,
             promoCodeId: input.promoCodeId || null,
@@ -456,8 +450,8 @@ export const createOrder = (
             tax: "0",
             total: total.toString(),
             notes: input.notes,
-            paymentMethod: input.paymentMethod ?? "cod",
-            paymentStatus: isOnlinePayment ? "pending" : "not_required",
+            paymentMethod: "cod" as const,
+            paymentStatus: "not_required" as const,
           };
 
           const definedInsertData = Object.fromEntries(
@@ -502,13 +496,8 @@ export const createOrder = (
                 });
               }
 
-              await tx
-                .update(product)
-                .set({
-                  stock: productData.stock - item.quantity,
-                })
-                .where(eq(product.id, item.productId));
-
+              // Wholesale intake: stock is NOT deducted at order creation.
+              // It is deducted only when an admin approves the order.
               const itemName = item.selectedOptions
                 ? `${productData.name} (${item.selectedOptions})`
                 : productData.name;
@@ -609,21 +598,24 @@ export const createOrder = (
     );
 
     // Send emails, but don't let failures block the order creation
-    // Single-shop mode: Only send customer notification, no vendor emails
-    try {
-      yield* $(
-        emailService.sendEmail(
-          input.customerEmail,
-          `${branding.storeName} Order Confirmation`,
-          emailTemplate,
-        ),
-      );
-    } catch (error) {
-      console.error(
-        `Failed to send confirmation email to customer ${input.customerEmail}:`,
-        error,
-      );
-      // Continue with order creation even if email fails
+    // Single-shop mode: Only send customer notification, no vendor emails.
+    // Wholesale flow: the "customer" may be a shop with no email — skip if absent.
+    if (input.customerEmail) {
+      try {
+        yield* $(
+          emailService.sendEmail(
+            input.customerEmail,
+            `${branding.storeName} Order Confirmation`,
+            emailTemplate,
+          ),
+        );
+      } catch (error) {
+        console.error(
+          `Failed to send confirmation email to customer ${input.customerEmail}:`,
+          error,
+        );
+        // Continue with order creation even if email fails
+      }
     }
 
     // Send admin notifications
@@ -647,34 +639,9 @@ export const createOrder = (
 
     // Single-shop mode: No vendor notifications needed
 
-    // Send order to Fincart (only for COD orders — online payment orders are shipped after payment confirmation)
-    const isOnlinePaymentOrder =
-      input.paymentMethod === "stripe" || input.paymentMethod === "paymob";
-    if (!isOnlinePaymentOrder) {
-      try {
-        // Use Effect to handle the async operation correctly
-        yield* $(Effect.promise(() => sendOrderToFincart(result))).pipe(
-          Effect.tap((fincartResult) => {
-            if (!fincartResult.success) {
-              console.error(
-                "Failed to send order to Fincart:",
-                fincartResult.error,
-              );
-            }
-          }),
-          Effect.catchAll((error) => {
-            console.error("Exception when sending order to Fincart:", error);
-            return Effect.succeed(undefined);
-          }),
-        );
-      } catch (error) {
-        console.error("Exception when sending order to Fincart:", error);
-      }
-    } else {
-      console.log(
-        `[Order ${result.id}] Online payment (${input.paymentMethod}) — Fincart shipment deferred until payment confirmed`,
-      );
-    }
+    // Wholesale flow: orders are NOT sent to Fincart at creation time.
+    // Shipping/fulfillment is handed off to Fincart only after an admin
+    // approves (accepts) the order — handled in the update-order-status flow.
 
     return result;
   });

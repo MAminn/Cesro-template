@@ -77,43 +77,18 @@ export default function CheckoutPage() {
     undefined,
   );
 
-  // ─── Fetch available payment methods from server ──────────────────────────
-  const [paymentMethods, setPaymentMethods] = useState<
+  // ─── Payment methods ──────────────────────────────────────────────────────
+  // Wholesale flow: online payment is disabled. Orders are COD / manual only.
+  const [paymentMethods] = useState<
     Array<{ id: string; label: string; description: string }>
-  >([]);
-  const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await trpc.payment.methods.query();
-        if (!cancelled && res?.methods) {
-          setPaymentMethods(res.methods);
-        }
-      } catch (err) {
-        console.warn(
-          "[Checkout] Could not fetch payment methods, defaulting to COD:",
-          err,
-        );
-        // Fallback — just show COD
-        if (!cancelled) {
-          setPaymentMethods([
-            {
-              id: "cod",
-              label: "Cash on Delivery",
-              description: "Pay when your order is delivered",
-            },
-          ]);
-        }
-      } finally {
-        if (!cancelled) setPaymentMethodsLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  >([
+    {
+      id: "cod",
+      label: "Cash on Delivery / Manual",
+      description: "Wholesale order — settled manually after admin approval",
+    },
+  ]);
+  const [paymentMethodsLoading] = useState(false);
 
   // ─── Fire checkout_started once per cart state per session ────────────────
   // Uses sessionStorage with a cart fingerprint to avoid re-firing on refresh
@@ -190,9 +165,9 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
     setErrorMessage(undefined);
 
-    const selectedPaymentMethod = formValues.paymentMethod || "cod";
-    const isOnlinePayment =
-      selectedPaymentMethod === "stripe" || selectedPaymentMethod === "paymob";
+    // Wholesale flow: orders are always created as COD / manual payment.
+    // Online payment gateways are intentionally disabled here.
+    const selectedPaymentMethod = "cod";
 
     try {
       // Validate cart has items
@@ -216,7 +191,7 @@ export default function CheckoutPage() {
         };
       });
 
-      // Submit order via tRPC (with paymentMethod)
+      // Submit order via tRPC (always COD for wholesale intake)
       const result = await trpc.order.create.mutate({
         customerName: formValues.fullName || "",
         customerEmail: formValues.email || "",
@@ -229,7 +204,7 @@ export default function CheckoutPage() {
         items: orderItemsPayload,
         notes: formValues.notes || undefined,
         promoCodeId: promoCode?.id,
-        paymentMethod: selectedPaymentMethod as "cod" | "stripe" | "paymob",
+        paymentMethod: selectedPaymentMethod,
       });
 
       if (!result.success) {
@@ -258,47 +233,11 @@ export default function CheckoutPage() {
         /* best-effort — tracking still works with value/transactionId */
       }
 
-      // ─── Online payment: create payment session & redirect ──────────
-      if (isOnlinePayment && orderId) {
-        try {
-          const origin =
-            typeof window !== "undefined" ? window.location.origin : "";
-          const paymentResult = await trpc.payment.createSession.mutate({
-            orderId,
-            paymentMethod: selectedPaymentMethod as "stripe" | "paymob",
-            successUrl: `${origin}/order-confirmation?id=${orderId}&total=${orderTotal}&email=${email}&payment=success`,
-            cancelUrl: `${origin}/order-confirmation?id=${orderId}&total=${orderTotal}&email=${email}&payment=cancelled`,
-          });
-
-          if (paymentResult.success && paymentResult.result?.paymentUrl) {
-            // Clear cart before redirecting to payment gateway
-            clearCart();
-            // Redirect to payment gateway
-            window.location.href = paymentResult.result.paymentUrl;
-            return;
-          }
-
-          throw new Error(
-            "Could not create payment session. Please try again.",
-          );
-        } catch (payErr) {
-          console.error("[Checkout] Payment session creation failed:", payErr);
-          setErrorMessage(
-            "Failed to initialize payment. Your order was created — you can pay later from your order history, or contact support.",
-          );
-          // Still clear cart and navigate to confirmation (order exists, payment pending)
-          clearCart();
-          navigate(
-            `/order-confirmation?id=${orderId}&total=${orderTotal}&email=${email}&payment=pending`,
-          );
-          return;
-        }
-      }
-
-      // ─── COD flow: just navigate to confirmation ──────────────────────
+      // ─── Wholesale flow: order created as "Pending Approval" ──────────
+      // No payment gateway redirect — go straight to confirmation.
       clearCart();
       navigate(
-        `/order-confirmation?id=${orderId}&total=${orderTotal}&email=${email}`,
+        `/order-confirmation?id=${orderId}&total=${orderTotal}&email=${email}&wholesale=1`,
       );
     } catch (error) {
       console.error("[Checkout] Order submission failed:", error);

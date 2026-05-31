@@ -28,6 +28,13 @@ export function CesroHero({ content, whatsappNumber }: CesroHeroProps) {
   const primaryHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(content.primaryCta.whatsappMessage ?? "")}`;
   const secondaryHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(content.secondaryCta.whatsappMessage ?? "")}`;
 
+  const showPrimaryCta =
+    content.primaryCta.enabled !== false && content.primaryCta.label !== "";
+  const showSecondaryCta =
+    content.secondaryCta.enabled !== false && content.secondaryCta.label !== "";
+  const showPresenceText =
+    content.presenceTextEnabled !== false && content.presenceText !== "";
+
   return (
     <section className='relative w-full min-h-screen flex items-end overflow-hidden'>
       {/* Background image — desktop */}
@@ -81,28 +88,34 @@ export function CesroHero({ content, whatsappNumber }: CesroHeroProps) {
             </p>
           )}
 
-          <div className='flex flex-col sm:flex-row items-start gap-4'>
-            <a
-              href={primaryHref}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='inline-flex items-center justify-center gap-3 font-bold tracking-wide transition-all duration-300 rounded-sm px-10 py-5 text-lg bg-whatsapp text-white hover:brightness-110 hover:shadow-[0_0_30px_rgba(37,211,102,0.4)]'
-              aria-label={`${content.primaryCta.label} - WhatsApp`}>
-              <WhatsAppIcon size={24} />
-              <span>{content.primaryCta.label}</span>
-            </a>
-            <a
-              href={secondaryHref}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='inline-flex items-center justify-center gap-3 font-bold tracking-wide transition-all duration-300 rounded-sm px-10 py-5 text-lg border border-white/30 text-white hover:border-white/70 hover:bg-white/10'
-              aria-label={`${content.secondaryCta.label} - WhatsApp`}>
-              <WhatsAppIcon size={24} />
-              <span>{content.secondaryCta.label}</span>
-            </a>
-          </div>
+          {(showPrimaryCta || showSecondaryCta) && (
+            <div className='flex flex-col sm:flex-row items-start gap-4'>
+              {showPrimaryCta && (
+                <a
+                  href={primaryHref}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='inline-flex items-center justify-center gap-3 font-bold tracking-wide transition-all duration-300 rounded-sm px-10 py-5 text-lg bg-whatsapp text-white hover:brightness-110 hover:shadow-[0_0_30px_rgba(37,211,102,0.4)]'
+                  aria-label={`${content.primaryCta.label} - WhatsApp`}>
+                  <WhatsAppIcon size={24} />
+                  <span>{content.primaryCta.label}</span>
+                </a>
+              )}
+              {showSecondaryCta && (
+                <a
+                  href={secondaryHref}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='inline-flex items-center justify-center gap-3 font-bold tracking-wide transition-all duration-300 rounded-sm px-10 py-5 text-lg border border-white/30 text-white hover:border-white/70 hover:bg-white/10'
+                  aria-label={`${content.secondaryCta.label} - WhatsApp`}>
+                  <WhatsAppIcon size={24} />
+                  <span>{content.secondaryCta.label}</span>
+                </a>
+              )}
+            </div>
+          )}
 
-          {content.presenceText && (
+          {showPresenceText && (
             <p className='text-white/40 text-sm mt-8 flex items-center gap-2'>
               <span className='inline-block w-2 h-2 rounded-full bg-whatsapp animate-pulse' />
               {content.presenceText}

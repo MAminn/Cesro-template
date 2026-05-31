@@ -36,12 +36,15 @@ export const CESRO_DEFAULT_CONTENT: CesroLandingContent = {
     primaryCta: {
       label: "تواصل واتساب",
       whatsappMessage: "مرحبًا، أريد الاستفسار عن أسعار الجملة للجينز",
+      enabled: true,
     },
     secondaryCta: {
       label: "اطلب عرض أسعار",
       whatsappMessage: "مرحبًا، أريد طلب عرض أسعار للجينز بالجملة",
+      enabled: true,
     },
     presenceText: "رد سريع عبر واتساب بيزنس",
+    presenceTextEnabled: true,
     backgroundImage: heroBg,
     mobileBackgroundImage: undefined,
   },

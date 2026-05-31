@@ -16,6 +16,8 @@ interface CtaEditorProps {
   value: CesroCTA;
   onChange: (next: CesroCTA) => void;
   whatsappNumber?: string;
+  /** When true, inputs are disabled but values are preserved. */
+  disabled?: boolean;
 }
 
 export function CtaEditor({
@@ -23,6 +25,7 @@ export function CtaEditor({
   value,
   onChange,
   whatsappNumber,
+  disabled = false,
 }: CtaEditorProps) {
   const mode: "whatsapp" | "link" =
     value.whatsappMessage !== undefined ? "whatsapp" : "link";
@@ -30,11 +33,16 @@ export function CtaEditor({
   const setMode = (next: "whatsapp" | "link") => {
     if (next === "whatsapp") {
       onChange({
-        label: value.label,
+        ...value,
         whatsappMessage: value.whatsappMessage ?? "",
+        link: undefined,
       });
     } else {
-      onChange({ label: value.label, link: value.link ?? "" });
+      onChange({
+        ...value,
+        link: value.link ?? "",
+        whatsappMessage: undefined,
+      });
     }
   };
 
@@ -49,6 +57,7 @@ export function CtaEditor({
           onChange={(e) => onChange({ ...value, label: e.target.value })}
           placeholder='Button text'
           className='mt-1'
+          disabled={disabled}
         />
       </div>
 
@@ -59,6 +68,7 @@ export function CtaEditor({
             name={`cta-mode-${sectionLabel}`}
             checked={mode === "whatsapp"}
             onChange={() => setMode("whatsapp")}
+            disabled={disabled}
           />
           WhatsApp message
         </label>
@@ -68,6 +78,7 @@ export function CtaEditor({
             name={`cta-mode-${sectionLabel}`}
             checked={mode === "link"}
             onChange={() => setMode("link")}
+            disabled={disabled}
           />
           Direct link
         </label>
@@ -79,12 +90,17 @@ export function CtaEditor({
           <Textarea
             value={value.whatsappMessage ?? ""}
             onChange={(e) =>
-              onChange({ label: value.label, whatsappMessage: e.target.value })
+              onChange({
+                ...value,
+                whatsappMessage: e.target.value,
+                link: undefined,
+              })
             }
             placeholder='مرحبًا، أريد الاستفسار عن...'
             rows={2}
             dir='auto'
             className='mt-1'
+            disabled={disabled}
           />
           {whatsappNumber && (
             <a
@@ -102,10 +118,15 @@ export function CtaEditor({
           <Input
             value={value.link ?? ""}
             onChange={(e) =>
-              onChange({ label: value.label, link: e.target.value })
+              onChange({
+                ...value,
+                link: e.target.value,
+                whatsappMessage: undefined,
+              })
             }
             placeholder='/shop or https://...'
             className='mt-1'
+            disabled={disabled}
           />
         </div>
       )}

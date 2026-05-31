@@ -38,6 +38,7 @@ export interface ProductPageClassicProps {
   onAddToCart?: (
     product: ProductPageProduct,
     selectedOptions?: Record<string, string>,
+    quantity?: number,
   ) => void;
   onAddToWishlist?: (product: ProductPageProduct) => void;
   onImageClick?: (imageUrl: string, index: number) => void;
@@ -138,7 +139,7 @@ export function ProductPageClassic({
 
   const handleAddToCart = () => {
     if (onAddToCart) {
-      onAddToCart(product, selectedVariants);
+      onAddToCart(product, selectedVariants, quantity);
     }
   };
 

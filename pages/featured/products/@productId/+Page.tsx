@@ -257,7 +257,9 @@ export default function ProductDetailPage() {
       onAddToCart={(
         product: ProductPageProduct,
         selectedOptions?: Record<string, string>,
+        quantity?: number,
       ) => {
+        const qty = Math.max(1, quantity ?? 1);
         const success = addItem(
           {
             id: product.id,
@@ -268,7 +270,7 @@ export default function ProductDetailPage() {
             categoryName: product.categoryName ?? undefined,
             available: product.available,
           },
-          1, // quantity
+          qty, // quantity
           selectedOptions || {}, // selectedOptions
         );
 
@@ -276,13 +278,13 @@ export default function ProductDetailPage() {
           trackEvent(TrackingEventName.PRODUCT_ADDED_TO_CART, {
             ecommerce: {
               currency: STORE_CURRENCY,
-              value: Number(product.discountPrice ?? product.price),
+              value: Number(product.discountPrice ?? product.price) * qty,
               items: [
                 {
                   itemId: product.id,
                   itemName: product.name,
                   price: Number(product.discountPrice ?? product.price),
-                  quantity: 1,
+                  quantity: qty,
                   category: product.categoryName ?? undefined,
                 },
               ],

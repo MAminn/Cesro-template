@@ -48,6 +48,7 @@ export interface ProductPageEditorialProps {
   onAddToCart?: (
     product: ProductPageProduct,
     selectedOptions?: Record<string, string>,
+    quantity?: number,
   ) => void;
   onAddToWishlist?: (product: ProductPageProduct) => void;
   onImageClick?: (imageUrl: string, index: number) => void;
@@ -226,7 +227,7 @@ export function ProductPageEditorial({
 
   const handleAddToCart = () => {
     if (onAddToCart && !isSoldOut) {
-      onAddToCart(product, selectedVariants);
+      onAddToCart(product, selectedVariants, quantity);
     }
   };
 

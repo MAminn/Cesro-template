@@ -35,6 +35,7 @@ export interface ProductPagePerceProps {
   onAddToCart?: (
     product: ProductPageProduct,
     selectedOptions?: Record<string, string>,
+    quantity?: number,
   ) => void;
   onAddToWishlist?: (product: ProductPageProduct) => void;
   onImageClick?: (imageUrl: string, index: number) => void;
@@ -520,7 +521,8 @@ export function ProductPagePerce({
     product.variants.every((v) => selectedVariants[v.name]);
 
   // ── Handlers
-  const handleAddToCart = () => onAddToCart?.(product, selectedVariants);
+  const handleAddToCart = () =>
+    onAddToCart?.(product, selectedVariants, quantity);
   const handleWishlist = () => onAddToWishlist?.(product);
 
   if (isLoading) return <Skeleton />;
@@ -880,7 +882,9 @@ export function ProductPagePerce({
           <button
             type='button'
             onClick={handleAddToCart}
-            disabled={!product.available || product.stock === 0 || !allVariantsSelected}
+            disabled={
+              !product.available || product.stock === 0 || !allVariantsSelected
+            }
             className='flex h-11 items-center justify-center gap-2 rounded-lg bg-stone-800 px-6 text-[11px] font-normal uppercase tracking-[0.15em] text-stone-100 transition-colors hover:bg-stone-700 disabled:cursor-not-allowed disabled:bg-stone-200 disabled:text-stone-400'>
             <ShoppingCart size={14} strokeWidth={1.5} />
             Add to Bag

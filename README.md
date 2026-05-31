@@ -7,6 +7,7 @@ A production-ready, fully-featured single-shop e-commerce template built with **
 ## Features
 
 ### Storefront
+
 - **26 swappable templates** across 8 categories — homepage, product pages, category pages, cart, checkout, search results, sorting, and landing pages
 - **Full product catalog** with images, descriptions, pricing, discounts, and stock management
 - **Hierarchical categories** — main categories with subcategories, Men/Women collections
@@ -18,6 +19,7 @@ A production-ready, fully-featured single-shop e-commerce template built with **
 - **Page transitions** — smooth CSS-overlay page transitions via Vike hooks (SSR-safe, reduced-motion aware)
 
 ### Admin Dashboard
+
 - **Product CRUD** — create, edit, delete products with multi-image uploads
 - **Order management** — view orders, update status (pending → processing → shipped → delivered)
 - **Category management** — hierarchical CRUD with main/subcategory support
@@ -29,6 +31,7 @@ A production-ready, fully-featured single-shop e-commerce template built with **
 - **Analytics dashboard** — conversion funnel, channel breakdown, platform health
 
 ### Technical
+
 - **Full-stack type safety** — tRPC v10 with SuperJSON, end-to-end TypeScript
 - **SSR** — Vike 0.4 with server-side rendering and client-side hydration
 - **Effect-TS** — functional error handling in backend services
@@ -47,6 +50,7 @@ A production-ready, fully-featured single-shop e-commerce template built with **
 ## Quick Start
 
 ### Prerequisites
+
 - **Node.js ≥ 22**
 - **pnpm** (recommended) or npm
 - **Docker** (for PostgreSQL) or a remote PostgreSQL instance
@@ -67,31 +71,31 @@ cp .env.example .env
 
 Edit `.env` with your values:
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `DATABASE_URL` | Yes | PostgreSQL connection string |
-| `PUBLIC_ORIGIN` | Yes | Public-facing origin URL (e.g. `http://localhost:5173`) |
-| `BASE_URL` | Yes | Internal server base URL (e.g. `http://127.0.0.1:3000`) |
-| `SINGLE_SHOP_MODE` | Yes | Set to `true` |
-| `ADMIN_EMAIL` | Yes | Admin account email |
-| `ADMIN_PASSWORD` | Yes | Admin account password |
-| `JWT_SECRET` | Yes | Secret string for JWT signing (at least 32 characters recommended) |
-| `SMTP_HOST` | Yes | SMTP server (e.g. `smtp.gmail.com`) |
-| `SMTP_PORT` | Yes | SMTP port (e.g. `465`) |
-| `SMTP_USER` | Yes | SMTP username |
-| `SMTP_PASSWORD` | Yes | SMTP password or app password |
-| `FINCART_API_URL` | Optional | Fincart API base URL |
-| `FINCART_API_KEY` | Optional | Fincart shipping API key |
-| `FINCART_WEBHOOK_SECRET` | Optional | Fincart webhook verification secret |
-| `FINCART_PICKUP_ID` | Optional | Fincart pickup location ID |
-| `FINCART_MERCHANT_LOCATION` | Optional | Fincart merchant location identifier |
-| `STRIPE_SECRET_KEY` | Optional | Stripe secret key — enables Stripe payments |
-| `STRIPE_WEBHOOK_SECRET` | Optional | Stripe webhook signing secret |
-| `VITE_STRIPE_PUBLIC_KEY` | Optional | Stripe publishable key (client-side) |
-| `PAYMOB_API_KEY` | Optional | Paymob API key — enables Paymob payments |
-| `PAYMOB_INTEGRATION_ID` | Optional | Paymob integration ID |
-| `PAYMOB_IFRAME_ID` | Optional | Paymob iframe ID |
-| `PAYMOB_HMAC_SECRET` | Optional | Paymob HMAC verification secret |
+| Variable                    | Required | Description                                                        |
+| --------------------------- | -------- | ------------------------------------------------------------------ |
+| `DATABASE_URL`              | Yes      | PostgreSQL connection string                                       |
+| `PUBLIC_ORIGIN`             | Yes      | Public-facing origin URL (e.g. `http://localhost:5173`)            |
+| `BASE_URL`                  | Yes      | Internal server base URL (e.g. `http://127.0.0.1:3000`)            |
+| `SINGLE_SHOP_MODE`          | Yes      | Set to `true`                                                      |
+| `ADMIN_EMAIL`               | Yes      | Admin account email                                                |
+| `ADMIN_PASSWORD`            | Yes      | Admin account password                                             |
+| `JWT_SECRET`                | Yes      | Secret string for JWT signing (at least 32 characters recommended) |
+| `SMTP_HOST`                 | Yes      | SMTP server (e.g. `smtp.gmail.com`)                                |
+| `SMTP_PORT`                 | Yes      | SMTP port (e.g. `465`)                                             |
+| `SMTP_USER`                 | Yes      | SMTP username                                                      |
+| `SMTP_PASSWORD`             | Yes      | SMTP password or app password                                      |
+| `FINCART_API_URL`           | Optional | Fincart API base URL                                               |
+| `FINCART_API_KEY`           | Optional | Fincart shipping API key                                           |
+| `FINCART_WEBHOOK_SECRET`    | Optional | Fincart webhook verification secret                                |
+| `FINCART_PICKUP_ID`         | Optional | Fincart pickup location ID                                         |
+| `FINCART_MERCHANT_LOCATION` | Optional | Fincart merchant location identifier                               |
+| `STRIPE_SECRET_KEY`         | Optional | Stripe secret key — enables Stripe payments                        |
+| `STRIPE_WEBHOOK_SECRET`     | Optional | Stripe webhook signing secret                                      |
+| `VITE_STRIPE_PUBLIC_KEY`    | Optional | Stripe publishable key (client-side)                               |
+| `PAYMOB_API_KEY`            | Optional | Paymob API key — enables Paymob payments                           |
+| `PAYMOB_INTEGRATION_ID`     | Optional | Paymob integration ID                                              |
+| `PAYMOB_IFRAME_ID`          | Optional | Paymob iframe ID                                                   |
+| `PAYMOB_HMAC_SECRET`        | Optional | Paymob HMAC verification secret                                    |
 
 ### 3. Start the database
 
@@ -154,26 +158,26 @@ Visit **http://localhost:3000**. An admin account is auto-seeded using `ADMIN_EM
 
 The template system is the core selling point. Admins can switch templates per category from the dashboard without touching code.
 
-| Category | Templates | Description |
-|----------|-----------|-------------|
-| Landing | 4 | modern, editorial, classic, minimal |
-| Home | 2 | featured products, modern v2 |
-| Product Page | 6 | percé, classic, editorial, technical, minimal, modern-split |
-| Category Page | 5 | grid-classic, hero-split, minimal, showcase, grid-with-filters |
-| Cart | 2 | modern, editorial |
-| Checkout | 2 | modern, editorial |
-| Search Results | 3 | grid, minimal, editorial |
-| Sorting/Collection | 2 | minimal, editorial |
+| Category           | Templates | Description                                                    |
+| ------------------ | --------- | -------------------------------------------------------------- |
+| Landing            | 4         | modern, editorial, classic, minimal                            |
+| Home               | 2         | featured products, modern v2                                   |
+| Product Page       | 6         | percé, classic, editorial, technical, minimal, modern-split    |
+| Category Page      | 5         | grid-classic, hero-split, minimal, showcase, grid-with-filters |
+| Cart               | 2         | modern, editorial                                              |
+| Checkout           | 2         | modern, editorial                                              |
+| Search Results     | 3         | grid, minimal, editorial                                       |
+| Sorting/Collection | 2         | minimal, editorial                                             |
 
 ### Motion Toolkit
 
 All editorial templates use a shared animation toolkit (`components/template-system/motion/`):
 
-| Component | Description |
-|-----------|-------------|
-| `Reveal` | Scroll-triggered reveal with `fadeUp`, `fadeIn`, or `clipReveal` variants |
-| `StaggerContainer` / `StaggerItem` | Cascading entrance animations for grids and lists |
-| `ParallaxImage` | GPU-accelerated parallax scroll effect for hero images |
+| Component                          | Description                                                               |
+| ---------------------------------- | ------------------------------------------------------------------------- |
+| `Reveal`                           | Scroll-triggered reveal with `fadeUp`, `fadeIn`, or `clipReveal` variants |
+| `StaggerContainer` / `StaggerItem` | Cascading entrance animations for grids and lists                         |
+| `ParallaxImage`                    | GPU-accelerated parallax scroll effect for hero images                    |
 
 All animations respect `prefers-reduced-motion` and are SSR-safe.
 
@@ -181,21 +185,21 @@ All animations respect `prefers-reduced-motion` and are SSR-safe.
 
 ## Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start dev server with hot reload |
-| `pnpm build` | Production build (unbuild + Vike build) |
-| `pnpm start` | Start production server |
-| `pnpm preview` | Preview production build locally |
-| `pnpm test` | Run tests with Vitest |
-| `pnpm test:watch` | Run tests in watch mode |
-| `pnpm typecheck` | TypeScript type checking |
-| `pnpm lint` | Lint with Biome |
-| `pnpm format` | Format with Biome |
-| `pnpm drizzle:generate` | Generate database migrations |
-| `pnpm drizzle:migrate` | Apply database migrations |
-| `pnpm drizzle:studio` | Open Drizzle Studio (DB GUI) |
-| `pnpm seed` | Seed the database with sample data |
+| Command                 | Description                             |
+| ----------------------- | --------------------------------------- |
+| `pnpm dev`              | Start dev server with hot reload        |
+| `pnpm build`            | Production build (unbuild + Vike build) |
+| `pnpm start`            | Start production server                 |
+| `pnpm preview`          | Preview production build locally        |
+| `pnpm test`             | Run tests with Vitest                   |
+| `pnpm test:watch`       | Run tests in watch mode                 |
+| `pnpm typecheck`        | TypeScript type checking                |
+| `pnpm lint`             | Lint with Biome                         |
+| `pnpm format`           | Format with Biome                       |
+| `pnpm drizzle:generate` | Generate database migrations            |
+| `pnpm drizzle:migrate`  | Apply database migrations               |
+| `pnpm drizzle:studio`   | Open Drizzle Studio (DB GUI)            |
+| `pnpm seed`             | Seed the database with sample data      |
 
 ---
 
@@ -223,24 +227,50 @@ Payment gateways are **auto-activating** — add the relevant keys to `.env` and
 
 ---
 
+## Deployment
+
+### Persistent uploads (important)
+
+Product and category images are uploaded to the `uploads/` directory on disk and
+referenced from the database as `/uploads/{filename}`. This directory **must be a
+persistent volume** in production, otherwise uploaded images are wiped on every
+redeploy and start returning `404`.
+
+- **Docker** — the `Dockerfile` declares `VOLUME ["/app/uploads"]`. Map a named
+  volume to it so files survive container rebuilds:
+
+  ```bash
+  docker run -v lebsy_uploads:/app/uploads ...
+  ```
+
+- **Coolify** — in the application's **Storages** settings, add a persistent
+  storage mount with destination path `/app/uploads`. This is required for
+  uploaded images to persist across deploys.
+
+On startup the server logs an `[Uploads]` line. If the database has file records
+but the uploads directory is empty, it prints a warning indicating the persistent
+volume is likely not mounted. Existing database file records are never modified.
+
+---
+
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 19, Tailwind CSS 4, shadcn/ui, Framer Motion 12 |
-| SSR Framework | Vike 0.4 |
-| API | tRPC v10 with SuperJSON |
-| Server | Fastify 5 |
-| Database | PostgreSQL + Drizzle ORM |
-| Backend Logic | Effect-TS |
-| Auth | JWT sessions + cookie-based auth |
-| Email | React Email + SMTP |
-| Payments | Stripe, Paymob (optional; COD mode when keys are absent) |
-| Shipping | Fincart API |
-| Analytics | Custom pixel tracking (Meta, GA4, TikTok, Snapchat, Pinterest) |
-| Build | Vite 6, unbuild, tsx |
-| Testing | Vitest |
-| Linting | Biome |
+| Layer         | Technology                                                     |
+| ------------- | -------------------------------------------------------------- |
+| Frontend      | React 19, Tailwind CSS 4, shadcn/ui, Framer Motion 12          |
+| SSR Framework | Vike 0.4                                                       |
+| API           | tRPC v10 with SuperJSON                                        |
+| Server        | Fastify 5                                                      |
+| Database      | PostgreSQL + Drizzle ORM                                       |
+| Backend Logic | Effect-TS                                                      |
+| Auth          | JWT sessions + cookie-based auth                               |
+| Email         | React Email + SMTP                                             |
+| Payments      | Stripe, Paymob (optional; COD mode when keys are absent)       |
+| Shipping      | Fincart API                                                    |
+| Analytics     | Custom pixel tracking (Meta, GA4, TikTok, Snapchat, Pinterest) |
+| Build         | Vite 6, unbuild, tsx                                           |
+| Testing       | Vitest                                                         |
+| Linting       | Biome                                                          |
 
 ---
 

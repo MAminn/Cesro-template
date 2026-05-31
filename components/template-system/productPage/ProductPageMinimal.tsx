@@ -53,6 +53,7 @@ export interface ProductPageMinimalProps {
   onAddToCart?: (
     product: ProductPageProduct,
     selectedOptions?: Record<string, string>,
+    quantity?: number,
   ) => void;
   onAddToWishlist?: (product: ProductPageProduct) => void;
   onImageClick?: (imageUrl: string, index: number) => void;
@@ -99,8 +100,8 @@ export function ProductPageMinimal({
         if (res.success && res.result) {
           const c = res.result as HomepageContent;
           const title = isAr
-            ? (c.productCarouselTitleAr || c.productCarouselTitle || "")
-            : (c.productCarouselTitle || "");
+            ? c.productCarouselTitleAr || c.productCarouselTitle || ""
+            : c.productCarouselTitle || "";
           setCarouselTitle(title);
         }
       })
@@ -183,7 +184,7 @@ export function ProductPageMinimal({
         images[selectedImage]?.url || product.imageUrl || "",
       );
 
-      onAddToCart(product, selectedVariants);
+      onAddToCart(product, selectedVariants, quantity);
 
       // Also add selected add-on products from inline carousels
       if (selectedAddOns.size > 0 && categoryGroups) {
@@ -412,10 +413,15 @@ export function ProductPageMinimal({
               type='button'
               className='cursor-pointer hover:opacity-80 transition-opacity'
               onClick={() => {
-                document.getElementById("product-reviews-section")?.scrollIntoView({ behavior: "smooth" });
-                setTimeout(() => window.dispatchEvent(new CustomEvent("open-review-form")), 400);
-              }}
-            >
+                document
+                  .getElementById("product-reviews-section")
+                  ?.scrollIntoView({ behavior: "smooth" });
+                setTimeout(
+                  () =>
+                    window.dispatchEvent(new CustomEvent("open-review-form")),
+                  400,
+                );
+              }}>
               <MinimalStarRating
                 rating={product.rating ?? 0}
                 count={product.reviewCount}
@@ -447,7 +453,9 @@ export function ProductPageMinimal({
             {/* Inspired By — directly under price */}
             {product.inspiredBy && (
               <div>
-                <p className='text-xs text-gray-500 uppercase tracking-wide mb-1'>Inspired by</p>
+                <p className='text-xs text-gray-500 uppercase tracking-wide mb-1'>
+                  Inspired by
+                </p>
                 <ColoredDescription
                   text={product.inspiredBy}
                   className='text-sm text-gray-700 italic'
@@ -482,7 +490,9 @@ export function ProductPageMinimal({
             {mergedCategoryProducts.length > 0 && (
               <div className='space-y-6 pt-2'>
                 <InlineCategoryCarousel
-                  title={carouselTitle || (isAr ? "منتجات أخرى" : "More Products")}
+                  title={
+                    carouselTitle || (isAr ? "منتجات أخرى" : "More Products")
+                  }
                   products={mergedCategoryProducts}
                   currentProductId={product.id}
                   selectedIds={selectedAddOns}
@@ -611,7 +621,13 @@ function ProductReviewsSection({ productId }: { productId: string }) {
   const { t, locale } = useMinimalI18n();
   const isAr = locale === "ar";
   const [reviews, setReviews] = useState<
-    { id: string; userName: string; rating: number; comment: string; createdAt: string }[]
+    {
+      id: string;
+      userName: string;
+      rating: number;
+      comment: string;
+      createdAt: string;
+    }[]
   >([]);
   const [avgRating, setAvgRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
@@ -649,7 +665,9 @@ function ProductReviewsSection({ productId }: { productId: string }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName.trim() || formRating === 0 || !formComment.trim()) {
-      toast.error(isAr ? "يرجى تعبئة جميع الحقول" : "Please fill in all fields");
+      toast.error(
+        isAr ? "يرجى تعبئة جميع الحقول" : "Please fill in all fields",
+      );
       return;
     }
     setSubmitting(true);
@@ -676,7 +694,9 @@ function ProductReviewsSection({ productId }: { productId: string }) {
   };
 
   return (
-    <div id='product-reviews-section' className='max-w-screen-xl mx-auto px-4 sm:px-6 py-12 border-t border-gray-100'>
+    <div
+      id='product-reviews-section'
+      className='max-w-screen-xl mx-auto px-4 sm:px-6 py-12 border-t border-gray-100'>
       {/* Header */}
       <div className='flex items-center justify-between mb-8'>
         <div>
@@ -696,8 +716,12 @@ function ProductReviewsSection({ productId }: { productId: string }) {
           className='rounded-none border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-colors'
           onClick={() => setShowForm(!showForm)}>
           {showForm
-            ? (isAr ? "إلغاء" : "Cancel")
-            : (isAr ? "أضف تقييم" : "Write a Review")}
+            ? isAr
+              ? "إلغاء"
+              : "Cancel"
+            : isAr
+              ? "أضف تقييم"
+              : "Write a Review"}
         </Button>
       </div>
 
@@ -759,8 +783,12 @@ function ProductReviewsSection({ productId }: { productId: string }) {
             disabled={submitting}
             className='bg-gray-900 hover:bg-gray-800 text-white rounded-none px-8 py-2'>
             {submitting
-              ? (isAr ? "جاري الإرسال..." : "Submitting...")
-              : (isAr ? "إرسال التقييم" : "Submit Review")}
+              ? isAr
+                ? "جاري الإرسال..."
+                : "Submitting..."
+              : isAr
+                ? "إرسال التقييم"
+                : "Submit Review"}
           </Button>
         </form>
       )}
@@ -768,24 +796,33 @@ function ProductReviewsSection({ productId }: { productId: string }) {
       {/* Review list */}
       {reviews.length === 0 ? (
         <p className='text-sm text-gray-400'>
-          {isAr ? "لا توجد تقييمات بعد. كن أول من يقيّم!" : "No reviews yet. Be the first to review!"}
+          {isAr
+            ? "لا توجد تقييمات بعد. كن أول من يقيّم!"
+            : "No reviews yet. Be the first to review!"}
         </p>
       ) : (
         <div className='space-y-6'>
           {reviews.map((review) => (
             <div key={review.id} className='border-b border-gray-100 pb-5'>
               <div className='flex items-center justify-between mb-1'>
-                <span className='text-sm font-medium text-gray-900'>{review.userName}</span>
+                <span className='text-sm font-medium text-gray-900'>
+                  {review.userName}
+                </span>
                 <span className='text-xs text-gray-400'>
-                  {new Date(review.createdAt).toLocaleDateString(isAr ? "ar-EG" : "en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
+                  {new Date(review.createdAt).toLocaleDateString(
+                    isAr ? "ar-EG" : "en-US",
+                    {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    },
+                  )}
                 </span>
               </div>
               <MinimalStarRating rating={review.rating} />
-              <p className='text-sm text-gray-600 mt-2 leading-relaxed'>{review.comment}</p>
+              <p className='text-sm text-gray-600 mt-2 leading-relaxed'>
+                {review.comment}
+              </p>
             </div>
           ))}
         </div>
@@ -909,7 +946,12 @@ function InlineProductCard({
       role='button'
       tabIndex={0}
       onClick={onToggle}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onToggle(); } }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onToggle();
+        }
+      }}
       className={`flex-none w-[130px] snap-start border transition-colors bg-white p-2 cursor-pointer ${isSelected ? "border-emerald-500 ring-1 ring-emerald-500" : "border-gray-100 hover:border-gray-300"}`}>
       {/* Checkbox */}
       <div
@@ -1253,10 +1295,7 @@ function MinimalStarRating({
 
   for (let i = 0; i < full; i++)
     stars.push(
-      <Star
-        key={`f${i}`}
-        className='h-4 w-4 fill-gray-900 text-gray-900'
-      />,
+      <Star key={`f${i}`} className='h-4 w-4 fill-gray-900 text-gray-900' />,
     );
   if (half)
     stars.push(

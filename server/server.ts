@@ -14,6 +14,7 @@ import { fincartWebhookPlugin } from "#root/backend/orders/fincart-webhook/api.j
 import { stripeWebhookPlugin } from "#root/backend/payments/stripe-webhook.js";
 import { paymobWebhookPlugin } from "#root/backend/payments/paymob-webhook.js";
 import { ensureDefaultStoreVendor } from "#root/shared/database/bootstrap.js";
+import { checkUploadsDirectory } from "#root/shared/database/bootstrap.js";
 import { listActiveClientConfigsRaw } from "#root/backend/pixel-tracking/pixel-config/ssr.js";
 import { getTemplateSelectionRaw } from "#root/backend/settings/get-template-selection-raw.js";
 import { getLayoutSettingsRaw } from "#root/backend/layout/get-layout-settings-raw.js";
@@ -203,6 +204,9 @@ async function buildServer() {
   // Bootstrap: Ensure default store vendor exists (single-shop mode)
   await ensureDefaultStoreVendor();
 
+  // Diagnostic: warn if uploads are missing (e.g. no persistent volume mounted)
+  await checkUploadsDirectory(`${root}/uploads`);
+
   await instance.register(emailServiceMiddleware);
 
   await instance.register(authFasitfyMiddleware);
@@ -285,7 +289,9 @@ async function buildServer() {
 
       // Read locale from cookie for SSR (prevents EN→AR flicker)
       const cookieHeader = request.headers.cookie ?? "";
-      const localeMatch = cookieHeader.match(/(?:^|;\s*)minimal-locale=(en|ar)/);
+      const localeMatch = cookieHeader.match(
+        /(?:^|;\s*)minimal-locale=(en|ar)/,
+      );
       const ssrLocale = (localeMatch?.[1] as "en" | "ar") ?? "en";
 
       const pageContextInit = {

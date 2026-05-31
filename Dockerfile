@@ -43,6 +43,11 @@ RUN mkdir -p /app/uploads \
     && chown node:node /app /app/uploads
 USER node
 
+# Persist user-uploaded product/category images across redeploys.
+# On Coolify/Docker, map a named persistent volume to this path so uploads
+# are not wiped when the container/image is rebuilt.
+VOLUME ["/app/uploads"]
+
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \

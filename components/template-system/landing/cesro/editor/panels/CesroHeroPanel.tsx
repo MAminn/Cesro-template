@@ -135,22 +135,85 @@ export function CesroHeroPanel({ value, onChange, whatsappNumber }: Props) {
           />
         </div>
 
-        <CtaEditor
-          label='Primary CTA'
-          value={value.primaryCta}
-          onChange={(cta) => onChange({ ...value, primaryCta: cta })}
-          whatsappNumber={whatsappNumber}
-        />
+        <div className='space-y-2'>
+          <div className='flex items-center justify-between'>
+            <Label className='text-sm font-semibold'>Primary CTA</Label>
+            <div className='flex items-center gap-2'>
+              <Label
+                htmlFor='cesro-hero-primary-cta-enabled'
+                className='text-xs'>
+                Show Primary CTA
+              </Label>
+              <Switch
+                id='cesro-hero-primary-cta-enabled'
+                checked={value.primaryCta.enabled !== false}
+                disabled={!value.enabled}
+                onCheckedChange={(checked) =>
+                  onChange({
+                    ...value,
+                    primaryCta: { ...value.primaryCta, enabled: checked },
+                  })
+                }
+              />
+            </div>
+          </div>
+          <CtaEditor
+            label='Primary CTA'
+            value={value.primaryCta}
+            onChange={(cta) => onChange({ ...value, primaryCta: cta })}
+            whatsappNumber={whatsappNumber}
+            disabled={!value.enabled || value.primaryCta.enabled === false}
+          />
+        </div>
 
-        <CtaEditor
-          label='Secondary CTA'
-          value={value.secondaryCta}
-          onChange={(cta) => onChange({ ...value, secondaryCta: cta })}
-          whatsappNumber={whatsappNumber}
-        />
+        <div className='space-y-2'>
+          <div className='flex items-center justify-between'>
+            <Label className='text-sm font-semibold'>Secondary CTA</Label>
+            <div className='flex items-center gap-2'>
+              <Label
+                htmlFor='cesro-hero-secondary-cta-enabled'
+                className='text-xs'>
+                Show Secondary CTA
+              </Label>
+              <Switch
+                id='cesro-hero-secondary-cta-enabled'
+                checked={value.secondaryCta.enabled !== false}
+                disabled={!value.enabled}
+                onCheckedChange={(checked) =>
+                  onChange({
+                    ...value,
+                    secondaryCta: { ...value.secondaryCta, enabled: checked },
+                  })
+                }
+              />
+            </div>
+          </div>
+          <CtaEditor
+            label='Secondary CTA'
+            value={value.secondaryCta}
+            onChange={(cta) => onChange({ ...value, secondaryCta: cta })}
+            whatsappNumber={whatsappNumber}
+            disabled={!value.enabled || value.secondaryCta.enabled === false}
+          />
+        </div>
 
         <div>
-          <Label className='text-xs'>Presence Text</Label>
+          <div className='flex items-center justify-between'>
+            <Label className='text-xs'>Presence Text</Label>
+            <div className='flex items-center gap-2'>
+              <Label htmlFor='cesro-hero-presence-enabled' className='text-xs'>
+                Show Presence Text
+              </Label>
+              <Switch
+                id='cesro-hero-presence-enabled'
+                checked={value.presenceTextEnabled !== false}
+                disabled={!value.enabled}
+                onCheckedChange={(checked) =>
+                  onChange({ ...value, presenceTextEnabled: checked })
+                }
+              />
+            </div>
+          </div>
           <Input
             value={value.presenceText}
             onChange={(e) =>
@@ -158,7 +221,7 @@ export function CesroHeroPanel({ value, onChange, whatsappNumber }: Props) {
             }
             placeholder='رد سريع عبر واتساب بيزنس'
             dir='auto'
-            disabled={!value.enabled}
+            disabled={!value.enabled || value.presenceTextEnabled === false}
           />
         </div>
 

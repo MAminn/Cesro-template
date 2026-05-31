@@ -47,6 +47,8 @@ export interface CesroCTA {
   whatsappMessage?: string;
   /** Navigation link. Exactly one of whatsappMessage or link must be set. */
   link?: string;
+  /** Whether the CTA is shown. Undefined is treated as true (backward compatible). */
+  enabled?: boolean;
 }
 
 // ── Hero ───────────────────────────────────────────────────
@@ -63,6 +65,8 @@ export interface CesroHeroContent {
   secondaryCta: CesroCTA;
   /** Presence text below CTAs (e.g. "رد سريع عبر واتساب بيزنس") */
   presenceText: string;
+  /** Whether the presence text is shown. Undefined is treated as true (backward compatible). */
+  presenceTextEnabled?: boolean;
   /** Full-bleed background image path */
   backgroundImage: string;
   mobileBackgroundImage?: string;

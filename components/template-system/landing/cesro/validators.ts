@@ -65,6 +65,7 @@ export const cesroCtaSchema = z
     label: z.string().min(1),
     whatsappMessage: z.string().min(1).optional(),
     link: z.string().min(1).optional(),
+    enabled: z.boolean().optional(),
   })
   .refine(
     (data) => {
@@ -89,6 +90,7 @@ export const cesroHeroSchema = z.object({
   primaryCta: cesroCtaSchema,
   secondaryCta: cesroCtaSchema,
   presenceText: z.string(),
+  presenceTextEnabled: z.boolean().optional(),
   backgroundImage: z.string().min(1),
   mobileBackgroundImage: z.string().min(1).optional(),
 });

@@ -1,0 +1,218 @@
+# Daftra API
+
+## Docs
+- [Welcome](https://docs.daftara.dev/928427m0.md): 
+- [Getting Started](https://docs.daftara.dev/933384m0.md): 
+- [Authorization](https://docs.daftara.dev/933385m0.md): 
+- [Validation Errors](https://docs.daftara.dev/1264814m0.md): 
+- API v2 Endpoints [What's new](https://docs.daftara.dev/1258822m0.md): 
+- API v2 Endpoints [Filtering](https://docs.daftara.dev/1258824m0.md): 
+- API v2 Endpoints > Using API v2 [Endpoints Structure](https://docs.daftara.dev/1259001m0.md): 
+
+## API Docs
+- API v1 Endpoints > Auth [Generate Access Token](https://docs.daftara.dev/15815885e0.md): 
+- API v1 Endpoints > Invoices [GET All Invoices](https://docs.daftara.dev/15115241e0.md): 
+- API v1 Endpoints > Invoices [GET Single Invoice](https://docs.daftara.dev/15115238e0.md): 
+- API v1 Endpoints > Invoices [Edit Invoices](https://docs.daftara.dev/15115239e0.md): 
+- API v1 Endpoints > Invoices [Delete Invoices](https://docs.daftara.dev/15115240e0.md): 
+- API v1 Endpoints > Invoices [Add New Invoice](https://docs.daftara.dev/15115242e0.md): 
+- API v1 Endpoints > Estimates [GET All Estimates](https://docs.daftara.dev/15115246e0.md): 
+- API v1 Endpoints > Estimates [GET Single Estimate](https://docs.daftara.dev/15115243e0.md): 
+- API v1 Endpoints > Estimates [Edit Estimates](https://docs.daftara.dev/15115244e0.md): 
+- API v1 Endpoints > Estimates [Delete Estimates](https://docs.daftara.dev/15115245e0.md): 
+- API v1 Endpoints > Estimates [Add New Estimate](https://docs.daftara.dev/15115247e0.md): 
+- API v1 Endpoints > Credit Notes [GET All Credit Notes](https://docs.daftara.dev/15115251e0.md): 
+- API v1 Endpoints > Credit Notes [GET Single Credit Note](https://docs.daftara.dev/15115248e0.md): 
+- API v1 Endpoints > Credit Notes [Edit Credit Notes](https://docs.daftara.dev/15115249e0.md): 
+- API v1 Endpoints > Credit Notes [Delete Credit Notes](https://docs.daftara.dev/15115250e0.md): 
+- API v1 Endpoints > Credit Notes [Add New Credit Note](https://docs.daftara.dev/15115252e0.md): 
+- API v1 Endpoints > Refund Receipts [GET All Refund Receipts](https://docs.daftara.dev/15115256e0.md): 
+- API v1 Endpoints > Refund Receipts [GET Single Refund Receipt](https://docs.daftara.dev/15115253e0.md): 
+- API v1 Endpoints > Refund Receipts [Edit Refund Receipts](https://docs.daftara.dev/15115254e0.md): 
+- API v1 Endpoints > Refund Receipts [Delete Refund Receipts](https://docs.daftara.dev/15115255e0.md): 
+- API v1 Endpoints > Refund Receipts [Add New Refund Receipt](https://docs.daftara.dev/15115257e0.md): 
+- API v1 Endpoints > Clients [GET All Clients](https://docs.daftara.dev/15115261e0.md): 
+- API v1 Endpoints > Clients [GET Single Client](https://docs.daftara.dev/15115258e0.md): 
+- API v1 Endpoints > Clients [Edit Clients](https://docs.daftara.dev/15115259e0.md): 
+- API v1 Endpoints > Clients [Delete Clients](https://docs.daftara.dev/15115260e0.md): 
+- API v1 Endpoints > Clients [Add New Client](https://docs.daftara.dev/15115262e0.md): 
+- API v1 Endpoints > Suppliers [GET All Suppliers](https://docs.daftara.dev/15115266e0.md): 
+- API v1 Endpoints > Suppliers [GET Single Supplier](https://docs.daftara.dev/15115263e0.md): 
+- API v1 Endpoints > Suppliers [Edit Suppliers](https://docs.daftara.dev/15115264e0.md): 
+- API v1 Endpoints > Suppliers [Delete Suppliers](https://docs.daftara.dev/15115265e0.md): 
+- API v1 Endpoints > Suppliers [Add New Supplier](https://docs.daftara.dev/15115267e0.md): 
+- API v1 Endpoints > Work Orders [GET Single Work Order](https://docs.daftara.dev/15115268e0.md): 
+- API v1 Endpoints > Work Orders [Edit Work Orders](https://docs.daftara.dev/15115269e0.md): 
+- API v1 Endpoints > Work Orders [Delete Work Orders](https://docs.daftara.dev/15115270e0.md): 
+- API v1 Endpoints > Work Orders [GET All Work Orders](https://docs.daftara.dev/15115271e0.md): 
+- API v1 Endpoints > Work Orders [Add New Work Order](https://docs.daftara.dev/15115272e0.md): 
+- API v1 Endpoints > Client Appointments [GET All Client Appointments](https://docs.daftara.dev/15115276e0.md): 
+- API v1 Endpoints > Client Appointments [GET Single Client Appointment](https://docs.daftara.dev/15115273e0.md): 
+- API v1 Endpoints > Client Appointments [Edit Client Appointments](https://docs.daftara.dev/15115274e0.md): 
+- API v1 Endpoints > Client Appointments [Delete Client Appointments](https://docs.daftara.dev/15115275e0.md): 
+- API v1 Endpoints > Client Appointments [Add New Client Appointment](https://docs.daftara.dev/15115277e0.md): 
+- API v1 Endpoints > Invoice Appointments [GET All Invoice Appointments](https://docs.daftara.dev/15115281e0.md): 
+- API v1 Endpoints > Invoice Appointments [GET Single Invoice Appointment](https://docs.daftara.dev/15115278e0.md): 
+- API v1 Endpoints > Invoice Appointments [Edit Invoice Appointments](https://docs.daftara.dev/15115279e0.md): 
+- API v1 Endpoints > Invoice Appointments [Delete Invoice Appointments](https://docs.daftara.dev/15115280e0.md): 
+- API v1 Endpoints > Invoice Appointments [Add New Invoice Appointment](https://docs.daftara.dev/15115282e0.md): 
+- API v1 Endpoints > Estimate Appointments [GET All Estimate Appointments](https://docs.daftara.dev/15115286e0.md): 
+- API v1 Endpoints > Estimate Appointments [GET Single Estimate Appointment](https://docs.daftara.dev/15115283e0.md): 
+- API v1 Endpoints > Estimate Appointments [Edit Estimate Appointments](https://docs.daftara.dev/15115284e0.md): 
+- API v1 Endpoints > Estimate Appointments [Delete Estimate Appointments](https://docs.daftara.dev/15115285e0.md): 
+- API v1 Endpoints > Estimate Appointments [Add New Estimate Appointment](https://docs.daftara.dev/15115287e0.md): 
+- API v1 Endpoints > Work Order Appointments [GET All Work Order Appointments](https://docs.daftara.dev/15115291e0.md): 
+- API v1 Endpoints > Work Order Appointments [GET Single Work Order Appointment](https://docs.daftara.dev/15115288e0.md): 
+- API v1 Endpoints > Work Order Appointments [Edit Work Order Appointments](https://docs.daftara.dev/15115289e0.md): 
+- API v1 Endpoints > Work Order Appointments [Delete Work Order Appointments](https://docs.daftara.dev/15115290e0.md): 
+- API v1 Endpoints > Work Order Appointments [Add New Work Order Appointment](https://docs.daftara.dev/15115292e0.md): 
+- API v1 Endpoints > Notes [GET All Notes](https://docs.daftara.dev/15115296e0.md): 
+- API v1 Endpoints > Notes [GET Single Note](https://docs.daftara.dev/15115293e0.md): 
+- API v1 Endpoints > Notes [Edit Notes](https://docs.daftara.dev/15115294e0.md): 
+- API v1 Endpoints > Notes [Delete Notes](https://docs.daftara.dev/15115295e0.md): 
+- API v1 Endpoints > Notes [Add New Note](https://docs.daftara.dev/15115297e0.md): 
+- API v1 Endpoints > Time Tracking [GET All Time Tracking](https://docs.daftara.dev/15115301e0.md): 
+- API v1 Endpoints > Time Tracking [GET Single Time Tracking](https://docs.daftara.dev/15115298e0.md): 
+- API v1 Endpoints > Time Tracking [Edit Time Tracking](https://docs.daftara.dev/15115299e0.md): 
+- API v1 Endpoints > Time Tracking [Delete Time Tracking](https://docs.daftara.dev/15115300e0.md): 
+- API v1 Endpoints > Time Tracking [Add New Time Tracking](https://docs.daftara.dev/15115302e0.md): 
+- API v1 Endpoints > Invoice Payments [GET All Invoice Payments](https://docs.daftara.dev/15115306e0.md): 
+- API v1 Endpoints > Invoice Payments [GET Single Invoice Payment](https://docs.daftara.dev/15115303e0.md): 
+- API v1 Endpoints > Invoice Payments [Edit Invoice Payments](https://docs.daftara.dev/15115304e0.md): 
+- API v1 Endpoints > Invoice Payments [Delete Invoice Payments](https://docs.daftara.dev/15115305e0.md): 
+- API v1 Endpoints > Invoice Payments [Add New Invoice Payment](https://docs.daftara.dev/15115307e0.md): 
+- API v1 Endpoints > Client Payments [GET All Client Payments](https://docs.daftara.dev/15115311e0.md): 
+- API v1 Endpoints > Client Payments [GET Single Client Payment](https://docs.daftara.dev/15115308e0.md): 
+- API v1 Endpoints > Client Payments [Edit Client Payments](https://docs.daftara.dev/15115309e0.md): 
+- API v1 Endpoints > Client Payments [Delete Client Payments](https://docs.daftara.dev/15115310e0.md): 
+- API v1 Endpoints > Client Payments [Add New Client Payment](https://docs.daftara.dev/15115312e0.md): 
+- API v1 Endpoints > Products [GET All Products](https://docs.daftara.dev/15115316e0.md): 
+- API v1 Endpoints > Products [GET Single Product](https://docs.daftara.dev/15115313e0.md): 
+- API v1 Endpoints > Products [Edit Products](https://docs.daftara.dev/15115314e0.md): 
+- API v1 Endpoints > Products [Delete Products](https://docs.daftara.dev/15115315e0.md): 
+- API v1 Endpoints > Products [Add New Product](https://docs.daftara.dev/15115317e0.md): 
+- API v1 Endpoints > Journals [GET All Journals](https://docs.daftara.dev/15115321e0.md): 
+- API v1 Endpoints > Journals [GET Single Journal](https://docs.daftara.dev/15115318e0.md): 
+- API v1 Endpoints > Journals [Edit Journals](https://docs.daftara.dev/15115319e0.md): 
+- API v1 Endpoints > Journals [Delete Journals](https://docs.daftara.dev/15115320e0.md): 
+- API v1 Endpoints > Journals [Add New Journal](https://docs.daftara.dev/15115322e0.md): 
+- API v1 Endpoints > Journal Accounts [GET All Journal Accounts](https://docs.daftara.dev/15115326e0.md): 
+- API v1 Endpoints > Journal Accounts [GET Single Journal Account](https://docs.daftara.dev/15115323e0.md): 
+- API v1 Endpoints > Journal Accounts [Edit Journal Accounts](https://docs.daftara.dev/15115324e0.md): 
+- API v1 Endpoints > Journal Accounts [Delete Journal Accounts](https://docs.daftara.dev/15115325e0.md): 
+- API v1 Endpoints > Journal Accounts [Add New Journal Account](https://docs.daftara.dev/15115327e0.md): 
+- API v1 Endpoints > Journal Cats [GET All Journal Cats](https://docs.daftara.dev/15115331e0.md): 
+- API v1 Endpoints > Journal Cats [GET Single Journal Cat](https://docs.daftara.dev/15115328e0.md): 
+- API v1 Endpoints > Journal Cats [Edit Journal Cats](https://docs.daftara.dev/15115329e0.md): 
+- API v1 Endpoints > Journal Cats [Delete Journal Cats](https://docs.daftara.dev/15115330e0.md): 
+- API v1 Endpoints > Journal Cats [Add New Journal Cat](https://docs.daftara.dev/15115332e0.md): 
+- API v1 Endpoints > Expenses [GET All Expenses](https://docs.daftara.dev/15115336e0.md): 
+- API v1 Endpoints > Expenses [GET Single Expens](https://docs.daftara.dev/15115333e0.md): 
+- API v1 Endpoints > Expenses [Edit Expenses](https://docs.daftara.dev/15115334e0.md): 
+- API v1 Endpoints > Expenses [Delete Expenses](https://docs.daftara.dev/15115335e0.md): 
+- API v1 Endpoints > Expenses [Add New Expens](https://docs.daftara.dev/15115337e0.md): 
+- API v1 Endpoints > Incomes [GET All Incomes](https://docs.daftara.dev/15115341e0.md): 
+- API v1 Endpoints > Incomes [GET Single Income](https://docs.daftara.dev/15115338e0.md): 
+- API v1 Endpoints > Incomes [Edit Incomes](https://docs.daftara.dev/15115339e0.md): 
+- API v1 Endpoints > Incomes [Delete Incomes](https://docs.daftara.dev/15115340e0.md): 
+- API v1 Endpoints > Incomes [Add New Income](https://docs.daftara.dev/15115342e0.md): 
+- API v1 Endpoints > Taxes [GET All Taxes](https://docs.daftara.dev/15115346e0.md): 
+- API v1 Endpoints > Taxes [GET Single Taxe](https://docs.daftara.dev/15115343e0.md): 
+- API v1 Endpoints > Taxes [Edit Taxes](https://docs.daftara.dev/15115344e0.md): 
+- API v1 Endpoints > Taxes [Delete Taxes](https://docs.daftara.dev/15115345e0.md): 
+- API v1 Endpoints > Taxes [Add New Taxe](https://docs.daftara.dev/15115347e0.md): 
+- API v1 Endpoints > Purchase Invoices [GET All Purchase Invoices](https://docs.daftara.dev/15115351e0.md): 
+- API v1 Endpoints > Purchase Invoices [GET Single Purchase Invoice](https://docs.daftara.dev/15115348e0.md): 
+- API v1 Endpoints > Purchase Invoices [Edit Purchase Invoices](https://docs.daftara.dev/15115349e0.md): 
+- API v1 Endpoints > Purchase Invoices [Delete Purchase Invoices](https://docs.daftara.dev/15115350e0.md): 
+- API v1 Endpoints > Purchase Invoices [Add New Purchase Invoice](https://docs.daftara.dev/15115352e0.md): 
+- API v1 Endpoints > Purchase Refunds [GET All Purchase Refunds](https://docs.daftara.dev/15115356e0.md): 
+- API v1 Endpoints > Purchase Refunds [GET Single Purchase Refund](https://docs.daftara.dev/15115353e0.md): 
+- API v1 Endpoints > Purchase Refunds [Edit Purchase Refunds](https://docs.daftara.dev/15115354e0.md): 
+- API v1 Endpoints > Purchase Refunds [Delete Purchase Refunds](https://docs.daftara.dev/15115355e0.md): 
+- API v1 Endpoints > Purchase Refunds [Add New Purchase Refund](https://docs.daftara.dev/15115357e0.md): 
+- API v1 Endpoints > Stock Transactions [GET All Stock Transactions](https://docs.daftara.dev/15115361e0.md): 
+- API v1 Endpoints > Stock Transactions [GET Single Stock Transaction](https://docs.daftara.dev/15115358e0.md): 
+- API v1 Endpoints > Stock Transactions [Edit Stock Transactions](https://docs.daftara.dev/15115359e0.md): 
+- API v1 Endpoints > Stock Transactions [Delete Stock Transactions](https://docs.daftara.dev/15115360e0.md): 
+- API v1 Endpoints > Stock Transactions [Add New Stock Transaction](https://docs.daftara.dev/15115362e0.md): 
+- API v1 Endpoints > Stores [GET All Stores](https://docs.daftara.dev/15115366e0.md): 
+- API v1 Endpoints > Stores [GET Single Store](https://docs.daftara.dev/15115363e0.md): 
+- API v1 Endpoints > Stores [Edit Stores](https://docs.daftara.dev/15115364e0.md): 
+- API v1 Endpoints > Stores [Delete Stores](https://docs.daftara.dev/15115365e0.md): 
+- API v1 Endpoints > Stores [Add New Store](https://docs.daftara.dev/15115367e0.md): 
+- API v1 Endpoints > Treasuries [GET All Treasuries](https://docs.daftara.dev/15115371e0.md): 
+- API v1 Endpoints > Treasuries [GET Single Treasury](https://docs.daftara.dev/15115368e0.md): 
+- API v1 Endpoints > Treasuries [Edit Treasuries](https://docs.daftara.dev/15115369e0.md): 
+- API v1 Endpoints > Treasuries [Delete Treasuries](https://docs.daftara.dev/15115370e0.md): 
+- API v1 Endpoints > Treasuries [Add New Treasury](https://docs.daftara.dev/15115372e0.md): 
+- API v1 Endpoints > Product Categories [GET All Product Categories](https://docs.daftara.dev/15115374e0.md): 
+- API v1 Endpoints > Product Categories [GET Single Product Category](https://docs.daftara.dev/15115373e0.md): 
+- API v1 Endpoints > Staff [GET Single Staff](https://docs.daftara.dev/15115375e0.md): 
+- API v1 Endpoints > Staff [GET All Staff](https://docs.daftara.dev/15115376e0.md): 
+- API v1 Endpoints > Client-attendance-log [Add New Client-attendance-log](https://docs.daftara.dev/15115377e0.md): 
+- API v1 Endpoints > General Listing [GET General Listing](https://docs.daftara.dev/15115384e0.md): Get list data as key,value pairs the key is the item_id and value is its title
+- API v1 Endpoints > Requsitions [GET All Requisitions ](https://docs.daftara.dev/18798279e0.md): 
+- API v1 Endpoints > Requsitions [GET single Requisition](https://docs.daftara.dev/18798317e0.md): 
+- API v1 Endpoints > Requsitions [Edit Requisitions](https://docs.daftara.dev/18798404e0.md): 
+- API v1 Endpoints > Requsitions [Delete Requisitions](https://docs.daftara.dev/18798419e0.md): 
+- API v1 Endpoints > Requsitions [Add New Requisition](https://docs.daftara.dev/18798425e0.md): 
+- API v1 Endpoints > Booking [Add new Booking](https://docs.daftara.dev/21799867e0.md): 
+- API v1 Endpoints > Booking [Change Booking Status](https://docs.daftara.dev/21801048e0.md): 
+- API v1 Endpoints > Booking [Convert booking to Invoice](https://docs.daftara.dev/21801170e0.md): 
+- API v1 Endpoints > Booking [Get All Bookings](https://docs.daftara.dev/21801487e0.md): 
+- API v1 Endpoints > Booking [Get Single Booking](https://docs.daftara.dev/21801502e0.md): 
+- API v1 Endpoints > Booking [Delete booking](https://docs.daftara.dev/21801523e0.md): 
+- API v1 Endpoints > Advance Payment Invoices [GET All Advance payment](https://docs.daftara.dev/32868810e0.md): 
+- API v1 Endpoints > Advance Payment Invoices [GET Single Advance payment](https://docs.daftara.dev/32868805e0.md): 
+- API v1 Endpoints > Advance Payment Invoices [Add Advance Payment](https://docs.daftara.dev/32867460e0.md): 
+- API v2 Endpoints > Using API v2 [Data Fetching — Filtered](https://docs.daftara.dev/18678234e0.md): 
+- API v2 Endpoints > Leave Application  [Get All Leave Applications](https://docs.daftara.dev/24362620e0.md): 
+- API v2 Endpoints > Leave Application  [Get Single Leave Applications ](https://docs.daftara.dev/24362621e0.md): 
+- API v2 Endpoints > Leave Application  [Edit Leave Application](https://docs.daftara.dev/24362863e0.md): 
+- API v2 Endpoints > Leave Application  [Add Leave Application](https://docs.daftara.dev/24362391e0.md): 
+- API v2 Endpoints > Purchase Debit Note [Purchase Debit Note](https://docs.daftara.dev/19114841e0.md): 
+- API v2 Endpoints > Purchase Debit Note [Purchase Debit Note](https://docs.daftara.dev/19116299e0.md): 
+- API v2 Endpoints > Branches  [Get All Branches ](https://docs.daftara.dev/24700082e0.md): 
+- API v2 Endpoints > Product Bundles [Add Product bundle](https://docs.daftara.dev/18861566e0.md): 
+- API v2 Endpoints > Follow Up Statuses [GET All Follow Up Statuses](https://docs.daftara.dev/15115383e0.md): 
+- API v2 Endpoints > Follow Up Statuses [GET Single Follow Up Status](https://docs.daftara.dev/15115381e0.md): 
+- API v2 Endpoints > Follow Up Statuses [Delete Follow Up Status](https://docs.daftara.dev/15115382e0.md): 
+- API v2 Endpoints > Follow Up Actions [GET All Follow Up Actions](https://docs.daftara.dev/15115380e0.md): 
+- API v2 Endpoints > Follow Up Actions [GET Single Follow Up Action](https://docs.daftara.dev/15115378e0.md): 
+- API v2 Endpoints > Follow Up Actions [Delete Follow Up Action](https://docs.daftara.dev/15115379e0.md): 
+- API v2 Endpoints > Attendance Logs [Get All Attendance Logs](https://docs.daftara.dev/22858364e0.md): 
+- API v2 Endpoints > Attendance Logs [Get Single Attendance Log](https://docs.daftara.dev/22858390e0.md): 
+- API v2 Endpoints > Attendance Logs [Add Attendance Log](https://docs.daftara.dev/22858360e0.md): 
+- API v2 Endpoints > Cost Centers [GET All Cost Centers](https://docs.daftara.dev/26170884e0.md): 
+- API v2 Endpoints > Cost Centers [GET Single Cost Center](https://docs.daftara.dev/26170888e0.md): 
+- API v2 Endpoints > Cost Centers [Edit Cost Center](https://docs.daftara.dev/26170901e0.md): 
+- API v2 Endpoints > Cost Centers [Add New Cost Center](https://docs.daftara.dev/26170894e0.md): 
+- API v2 Endpoints > Payment Gateways [Get All Payment Methods](https://docs.daftara.dev/31463724e0.md): 
+- API v2 Endpoints > Payment Gateways [Get Single Payment Method](https://docs.daftara.dev/31463726e0.md): 
+- API v2 Endpoints > Payment Gateways [Add Payment Method](https://docs.daftara.dev/31463718e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Usage [Get All Credit Usage](https://docs.daftara.dev/27846421e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Usage [Get Single Credit Usage ](https://docs.daftara.dev/27867989e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Usage [Add New Credit Usage](https://docs.daftara.dev/27846422e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Usage [Add Credit Usage Amount](https://docs.daftara.dev/27846423e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Usage [Edit Credit Usage](https://docs.daftara.dev/27846425e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Usage [Edit Credit Usage Amount](https://docs.daftara.dev/27846424e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Usage [Get All Credit Usage Amount](https://docs.daftara.dev/27870116e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Usage [Get Single Credit Usage Amount](https://docs.daftara.dev/27870132e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Types [Get All Credit types](https://docs.daftara.dev/27846426e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Types [Get Single Credit type ](https://docs.daftara.dev/27868129e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Types [Add New Credit type](https://docs.daftara.dev/27846427e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Types [Edit Credit type](https://docs.daftara.dev/27846428e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Charges [Get All Credit Charges](https://docs.daftara.dev/27868303e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Charges [Get Single Credit Charge](https://docs.daftara.dev/27846429e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Charges [Add New Credit Charge](https://docs.daftara.dev/27846430e0.md): 
+- API v2 Endpoints > Points & Credits > Credit Charges [Edit Credit Charge](https://docs.daftara.dev/27846431e0.md): 
+- API v2 Endpoints > Points & Credits > Packages [Get All Packages](https://docs.daftara.dev/27868320e0.md): 
+- API v2 Endpoints > Points & Credits > Packages [Get Single Package](https://docs.daftara.dev/27846432e0.md): 
+- API v2 Endpoints > Points & Credits > Packages [Add New Package](https://docs.daftara.dev/27846433e0.md): 
+- API v2 Endpoints > Points & Credits > Packages [Edit Package](https://docs.daftara.dev/27846434e0.md): 
+- API v2 Endpoints > Points & Credits > Packages Credit Types [Get All Package Credit Types](https://docs.daftara.dev/27846435e0.md): 
+- API v2 Endpoints > Points & Credits > Packages Credit Types [Get Single Package Credit Type](https://docs.daftara.dev/27868329e0.md): 
+- API v2 Endpoints > Points & Credits > Packages Credit Types [Add Package Credit Type](https://docs.daftara.dev/27846436e0.md): 
+- API v2 Endpoints > Points & Credits > Packages Credit Types [Edit Package Credit Type](https://docs.daftara.dev/27846437e0.md): 
+- API v2 Endpoints > Site [GET Site Info](https://docs.daftara.dev/15115385e0.md): Get current site info

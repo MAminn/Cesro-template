@@ -1,9 +1,9 @@
-import { query } from "#root/shared/database/drizzle/db";
-import { order, orderItem, user } from "#root/shared/database/drizzle/schema";
-import { and, desc, eq, inArray, type SQL } from "drizzle-orm";
+import { type SQL, and, desc, eq, inArray } from "drizzle-orm";
 import { Effect } from "effect";
 import { z } from "zod";
 import type { ClientSession } from "#root/backend/auth/shared/entities";
+import { query } from "#root/shared/database/drizzle/db";
+import { order, orderItem, user } from "#root/shared/database/drizzle/schema";
 import { ServerError } from "#root/shared/error/server";
 
 export const viewOrdersSchema = z.object({
@@ -85,6 +85,11 @@ export const viewOrders = (
               createdAt: order.createdAt,
               updatedAt: order.updatedAt,
               daftraSyncStatus: order.daftraSyncStatus,
+              daftraInvoiceId: order.daftraInvoiceId,
+              daftraOrderId: order.daftraOrderId,
+              daftraCustomerId: order.daftraCustomerId,
+              daftraLastSyncError: order.daftraLastSyncError,
+              daftraSyncedAt: order.daftraSyncedAt,
             })
             .from(order)
             .where(conditions.length > 0 ? and(...conditions) : undefined)

@@ -1,26 +1,27 @@
+import { accountsRouter } from "#root/backend/accounts/trpc";
+import { analyticsRouter } from "#root/backend/analytics/trpc";
 import { loginProcedure } from "#root/backend/auth/login/trpc.js";
 import { logoutProcedure } from "#root/backend/auth/logout/trpc.js";
 import { meProcedure } from "#root/backend/auth/me/trpc.js";
-import { registerProcedure } from "#root/backend/auth/register/trpc.js";
-import { verifyEmailProcedure } from "#root/backend/auth/verify-email/trpc.js";
 import {
   requestPasswordResetProcedure,
   resetPasswordProcedure,
 } from "#root/backend/auth/password-reset/trpc.js";
+import { registerProcedure } from "#root/backend/auth/register/trpc.js";
 import { updateProfileProcedure } from "#root/backend/auth/update-profile/trpc.js";
+import { verifyEmailProcedure } from "#root/backend/auth/verify-email/trpc.js";
 import { categoriesRouter } from "#root/backend/categories/trpc";
+import { contactRouter } from "#root/backend/contact/trpc";
 import { fileRouter } from "#root/backend/file/trpc";
+import { homepageRouter } from "#root/backend/homepage/trpc";
+import { daftraRouter } from "#root/backend/integrations/daftra/trpc";
+import { layoutRouter } from "#root/backend/layout/trpc";
 import { orderRouter } from "#root/backend/orders/trpc";
+import { paymentRouter } from "#root/backend/payments/trpc";
+import { pixelTrackingRouter } from "#root/backend/pixel-tracking/trpc";
 import { productRouter } from "#root/backend/products/trpc";
 import { promoCodesRouter } from "#root/backend/promo-codes/trpc";
-import { homepageRouter } from "#root/backend/homepage/trpc";
-import { layoutRouter } from "#root/backend/layout/trpc";
-import { pixelTrackingRouter } from "#root/backend/pixel-tracking/trpc";
-import { paymentRouter } from "#root/backend/payments/trpc";
 import { settingsRouter } from "#root/backend/settings/trpc";
-import { analyticsRouter } from "#root/backend/analytics/trpc";
-import { contactRouter } from "#root/backend/contact/trpc";
-import { accountsRouter } from "#root/backend/accounts/trpc";
 import { publicProcedure, router, t } from "./server";
 
 const authRouter = t.router({
@@ -52,6 +53,7 @@ export const appRouter = router({
   analytics: analyticsRouter,
   contact: contactRouter,
   accounts: accountsRouter,
+  daftra: daftraRouter,
 });
 
 export type AppRouter = typeof appRouter;

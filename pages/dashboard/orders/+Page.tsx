@@ -1,40 +1,16 @@
-import { useEffect, useState, useCallback } from "react";
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "#root/components/ui/card";
-import { Badge } from "#root/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "#root/components/ui/table";
-import { Button } from "#root/components/ui/button";
-import { Input } from "#root/components/ui/input";
-import { Textarea } from "#root/components/ui/textarea";
-import { Label } from "#root/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "#root/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "#root/components/ui/dialog";
+  ChevronDown,
+  Eye,
+  Filter,
+  Loader2,
+  Package,
+  Pencil,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { usePageContext } from "vike-react/usePageContext";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -46,20 +22,44 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "#root/components/ui/alert-dialog";
+import { Badge } from "#root/components/ui/badge";
+import { Button } from "#root/components/ui/button";
 import {
-  Package,
-  Search,
-  Filter,
-  ChevronDown,
-  Eye,
-  Loader2,
-  Trash2,
-  Pencil,
-  X,
-} from "lucide-react";
-import { usePageContext } from "vike-react/usePageContext";
-import { trpc } from "#root/shared/trpc/client";
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "#root/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "#root/components/ui/dialog";
+import { Input } from "#root/components/ui/input";
+import { Label } from "#root/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "#root/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "#root/components/ui/table";
+import { Textarea } from "#root/components/ui/textarea";
 import { useToast } from "#root/components/ui/use-toast";
+import { trpc } from "#root/shared/trpc/client";
 
 interface OrderItem {
   id: string;
@@ -90,6 +90,11 @@ interface Order {
   createdAt: Date;
   updatedAt: Date | null;
   daftraSyncStatus?: string | null;
+  daftraInvoiceId?: string | null;
+  daftraOrderId?: string | null;
+  daftraCustomerId?: string | null;
+  daftraLastSyncError?: string | null;
+  daftraSyncedAt?: Date | null;
   items: OrderItem[];
 }
 
@@ -118,6 +123,8 @@ interface EditFormState {
 export default function Orders() {
   const { clientSession } = usePageContext();
   const isAdmin = clientSession?.role === "admin";
+  const isStaff =
+    clientSession?.role === "admin" || clientSession?.role === "accountant";
   const { toast } = useToast();
 
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -125,6 +132,8 @@ export default function Orders() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  // Tracks the order id currently being synced to Daftra (null = none).
+  const [syncingOrderId, setSyncingOrderId] = useState<string | null>(null);
 
   // ─── Edit order (admin) ──────────────────────────────────────────────
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -231,6 +240,49 @@ export default function Orders() {
       console.error(err);
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  // Manually sync a single accepted (processing) order to Daftra. The backend
+  // enforces all safety guards (accepted-only, no-duplicate, non-empty); this
+  // handler only gates the UI and surfaces the result.
+  const handleSyncToDaftra = async (orderId: string, isRetry: boolean) => {
+    const confirmed = window.confirm(
+      isRetry
+        ? "Retry syncing this order to Daftra?"
+        : "Sync this order to Daftra? This will create a customer and a sales invoice in Daftra.",
+    );
+    if (!confirmed) return;
+
+    setSyncingOrderId(orderId);
+    try {
+      const result = await trpc.daftra.syncOrder.mutate({ orderId });
+
+      if (result.status === "synced") {
+        toast({
+          title: "Synced to Daftra",
+          description: result.daftraInvoiceId
+            ? `Daftra invoice ${result.daftraInvoiceId} created.`
+            : "Order synced successfully.",
+        });
+      } else {
+        toast({
+          title: "Daftra Sync Failed",
+          description: result.error || "Could not sync order to Daftra.",
+          variant: "destructive",
+        });
+      }
+    } catch (err) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred during Daftra sync.",
+        variant: "destructive",
+      });
+      console.error("Daftra sync error:", err);
+    } finally {
+      setSyncingOrderId(null);
+      // Refresh so the latest sync status / Daftra IDs are reflected.
+      fetchOrders();
     }
   };
 
@@ -405,14 +457,12 @@ export default function Orders() {
         return acc + (Number.isFinite(unit) ? unit : 0) * item.quantity;
       }, 0)
     : 0;
-  const editDiscountNum =
-    editForm && editForm.discount
-      ? Number.parseFloat(editForm.discount) || 0
-      : 0;
-  const editShippingNum =
-    editForm && editForm.shipping
-      ? Number.parseFloat(editForm.shipping) || 0
-      : 0;
+  const editDiscountNum = editForm?.discount
+    ? Number.parseFloat(editForm.discount) || 0
+    : 0;
+  const editShippingNum = editForm?.shipping
+    ? Number.parseFloat(editForm.shipping) || 0
+    : 0;
   const editTotal =
     Math.max(0, editSubtotal - editDiscountNum) + editShippingNum;
 
@@ -607,13 +657,64 @@ export default function Orders() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            variant='outline'
-                            className={getDaftraSyncColor(
-                              order.daftraSyncStatus,
-                            )}>
-                            {getDaftraSyncLabel(order.daftraSyncStatus)}
-                          </Badge>
+                          <div className='flex flex-col items-start gap-1'>
+                            <Badge
+                              variant='outline'
+                              className={getDaftraSyncColor(
+                                order.daftraSyncStatus,
+                              )}>
+                              {getDaftraSyncLabel(order.daftraSyncStatus)}
+                            </Badge>
+                            {order.daftraInvoiceId && (
+                              <span className='text-xs text-muted-foreground'>
+                                Invoice #{order.daftraInvoiceId}
+                              </span>
+                            )}
+                            {order.daftraSyncStatus === "failed" &&
+                              order.daftraLastSyncError && (
+                                <span className='text-xs text-red-600 max-w-45 truncate'>
+                                  {order.daftraLastSyncError}
+                                </span>
+                              )}
+                            {isStaff &&
+                              order.status === "processing" &&
+                              (() => {
+                                const alreadySynced =
+                                  order.daftraSyncStatus === "synced" ||
+                                  Boolean(order.daftraInvoiceId);
+                                const isFailed =
+                                  order.daftraSyncStatus === "failed";
+                                const isSyncing = syncingOrderId === order.id;
+
+                                if (alreadySynced) {
+                                  return (
+                                    <Button
+                                      variant='outline'
+                                      size='sm'
+                                      disabled
+                                      className='h-7 text-xs'>
+                                      Already Synced
+                                    </Button>
+                                  );
+                                }
+
+                                return (
+                                  <Button
+                                    variant='outline'
+                                    size='sm'
+                                    className='h-7 text-xs'
+                                    disabled={isSyncing}
+                                    onClick={() =>
+                                      handleSyncToDaftra(order.id, isFailed)
+                                    }>
+                                    {isSyncing && (
+                                      <Loader2 className='mr-1 h-3 w-3 animate-spin' />
+                                    )}
+                                    {isFailed ? "Retry Sync" : "Sync to Daftra"}
+                                  </Button>
+                                );
+                              })()}
+                          </div>
                         </TableCell>
                         <TableCell className='text-right'>
                           <div className='flex items-center gap-2 justify-end'>

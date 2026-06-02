@@ -113,9 +113,11 @@ async function persistSyncResult(
  * Safe by design:
  *  - Returns a failed result (and records it) instead of throwing.
  *  - No-ops cleanly when Daftra is not ready.
- *  - Does NOT enforce that the order is "accepted" — the caller is responsible
- *    for only invoking this after acceptance. This is intentionally NOT yet
- *    connected to the acceptance flow.
+ *  - Only syncs accepted orders (status "processing").
+ *  - Skips orders that are already synced (no duplicate invoices).
+ *  - Refuses orders with no line items.
+ *  - This is intentionally NOT yet connected to the acceptance flow; the
+ *    caller must invoke it explicitly.
  *
  * @param orderId Cesro order id to sync.
  */
@@ -159,6 +161,57 @@ export async function syncOrderToDaftra(
       daftraInvoiceId: null,
       error: `Order ${orderId} not found.`,
     };
+  }
+
+  // Guard 1 — Prevent duplicate sync. If the order already has Daftra IDs or
+  // is marked synced, return the stored result without calling the Daftra API.
+  if (
+    loaded.found.daftraSyncStatus === "synced" ||
+    loaded.found.daftraInvoiceId ||
+    loaded.found.daftraOrderId
+  ) {
+    console.info(
+      `[Daftra] Sync skipped for order ${orderId}: already synced ` +
+        `(invoiceId=${loaded.found.daftraInvoiceId ?? "null"}).`,
+    );
+    return {
+      status: "synced",
+      daftraCustomerId: loaded.found.daftraCustomerId ?? null,
+      daftraInvoiceId:
+        loaded.found.daftraInvoiceId ?? loaded.found.daftraOrderId ?? null,
+      error: null,
+    };
+  }
+
+  // Guard 2 — Only accepted orders (status "processing") may be synced.
+  if (loaded.found.status !== "processing") {
+    const error = "Only accepted orders can be synced to Daftra.";
+    console.warn(
+      `[Daftra] Sync blocked for order ${orderId}: status is ` +
+        `"${loaded.found.status}", expected "processing". ${error}`,
+    );
+    const failed: DaftraSyncResult = {
+      status: "failed",
+      daftraCustomerId: null,
+      daftraInvoiceId: null,
+      error,
+    };
+    await persistSyncResult(orderId, failed, null);
+    return failed;
+  }
+
+  // Guard 3 — Refuse to sync an order with no line items.
+  if (loaded.items.length === 0) {
+    const error = "Cannot sync order with no items.";
+    console.warn(`[Daftra] Sync failed for order ${orderId}: ${error}`);
+    const failed: DaftraSyncResult = {
+      status: "failed",
+      daftraCustomerId: null,
+      daftraInvoiceId: null,
+      error,
+    };
+    await persistSyncResult(orderId, failed, null);
+    return failed;
   }
 
   const cesroOrder: CesroOrderForDaftra = {

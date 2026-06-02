@@ -406,6 +406,17 @@ export const order = pgTable("order", {
     mode: "date",
   }),
   fincartWebhookData: jsonb("fincart_webhook_data"),
+  // Daftra ERP integration fields (sync only happens after order acceptance)
+  daftraSyncStatus: text("daftra_sync_status").default("not_synced"),
+  daftraOrderId: text("daftra_order_id"),
+  daftraInvoiceId: text("daftra_invoice_id"),
+  daftraCustomerId: text("daftra_customer_id"),
+  daftraLastSyncError: text("daftra_last_sync_error"),
+  daftraSyncedAt: timestamp("daftra_synced_at", {
+    withTimezone: true,
+    mode: "date",
+  }),
+  daftraPayload: jsonb("daftra_payload"),
 });
 
 export const orderItem = pgTable("order_item", {

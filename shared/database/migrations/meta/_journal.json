@@ -183,6 +183,13 @@
       "when": 1780223265674,
       "tag": "0025_even_gorgon",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1780404054283,
+      "tag": "0026_modern_lady_mastermind",
+      "breakpoints": true
     }
   ]
 }

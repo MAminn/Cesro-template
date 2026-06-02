@@ -89,6 +89,7 @@ interface Order {
   notes: string | null;
   createdAt: Date;
   updatedAt: Date | null;
+  daftraSyncStatus?: string | null;
   items: OrderItem[];
 }
 
@@ -314,6 +315,29 @@ export default function Orders() {
         return "Delivered";
       default:
         return status.charAt(0).toUpperCase() + status.slice(1);
+    }
+  };
+
+  // Daftra ERP sync status badge styling.
+  const getDaftraSyncColor = (status?: string | null) => {
+    switch (status) {
+      case "synced":
+        return "bg-green-100 text-green-800";
+      case "failed":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-600";
+    }
+  };
+
+  const getDaftraSyncLabel = (status?: string | null) => {
+    switch (status) {
+      case "synced":
+        return "Synced";
+      case "failed":
+        return "Failed";
+      default:
+        return "Not synced";
     }
   };
 
@@ -548,6 +572,7 @@ export default function Orders() {
                       <TableHead>Items</TableHead>
                       <TableHead>Total</TableHead>
                       <TableHead>Status</TableHead>
+                      <TableHead>Daftra</TableHead>
                       <TableHead className='text-right'>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -579,6 +604,15 @@ export default function Orders() {
                             variant='outline'
                             className={getStatusColor(order.status)}>
                             {getStatusLabel(order.status)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant='outline'
+                            className={getDaftraSyncColor(
+                              order.daftraSyncStatus,
+                            )}>
+                            {getDaftraSyncLabel(order.daftraSyncStatus)}
                           </Badge>
                         </TableCell>
                         <TableCell className='text-right'>

@@ -84,6 +84,7 @@ export const viewOrders = (
               notes: order.notes,
               createdAt: order.createdAt,
               updatedAt: order.updatedAt,
+              daftraSyncStatus: order.daftraSyncStatus,
             })
             .from(order)
             .where(conditions.length > 0 ? and(...conditions) : undefined)

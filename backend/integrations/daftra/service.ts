@@ -21,8 +21,10 @@ import {
   mapOrderToDaftraInvoice,
 } from "./mapper";
 import type {
+  DaftraClientRequest,
   DaftraConnectionResult,
   DaftraCreateResponse,
+  DaftraRequestResult,
   DaftraSyncResult,
 } from "./types";
 
@@ -81,6 +83,135 @@ function extractCreatedId(
     return null;
   }
   return String(response.id);
+}
+
+/**
+ * Flattens whatever client records Daftra's list endpoint returns into a plain
+ * array of `{ id, email }` objects. Daftra may wrap each row as
+ * `{ Client: {...} }` or return the fields directly, under a `data` array or at
+ * the top level — we handle all of those defensively.
+ */
+function collectClientRecords(
+  data: unknown,
+): Array<{ id: unknown; email: unknown }> {
+  const rows = Array.isArray(data)
+    ? data
+    : data &&
+        typeof data === "object" &&
+        Array.isArray((data as { data?: unknown }).data)
+      ? (data as { data: unknown[] }).data
+      : [];
+
+  return rows.map((row) => {
+    const record =
+      row && typeof row === "object" && "Client" in row
+        ? (row as { Client: Record<string, unknown> }).Client
+        : (row as Record<string, unknown>);
+    return {
+      id: record?.id,
+      email: record?.email,
+    };
+  });
+}
+
+/**
+ * Looks up an existing Daftra client id by email. Returns null when the email
+ * is empty, the request fails, or no exact (case-insensitive) match is found.
+ * The query filter is best-effort; results are always re-checked client-side so
+ * we never reuse a client whose email does not actually match.
+ */
+async function findDaftraClientIdByEmail(
+  email: string,
+): Promise<string | null> {
+  const target = email.trim().toLowerCase();
+  if (!target) return null;
+
+  const query = `/clients.json?client[email]=${encodeURIComponent(email)}&limit=50`;
+  const result = await daftraRequest<unknown>(query, { method: "GET" });
+  if (!result.ok || result.data == null) return null;
+
+  for (const record of collectClientRecords(result.data)) {
+    const recordEmail =
+      typeof record.email === "string" ? record.email.trim().toLowerCase() : "";
+    if (recordEmail && recordEmail === target && record.id != null) {
+      return String(record.id);
+    }
+  }
+  return null;
+}
+
+/**
+ * Detects Daftra's "Email already exists" duplicate-client rejection across the
+ * shapes it can arrive in (validation_errors.email, message, or error body).
+ */
+function isDuplicateEmailError(
+  result: DaftraRequestResult<DaftraCreateResponse>,
+): boolean {
+  if (result.data?.validation_errors?.email) return true;
+  const haystack =
+    `${result.error ?? ""} ${result.data?.message ?? ""}`.toLowerCase();
+  return haystack.includes("already exists") && haystack.includes("email");
+}
+
+/**
+ * Resolves a Daftra client id for the order, reusing an existing client when
+ * possible to avoid duplicate-email failures for repeat customers:
+ *  1. Look up an existing client by email; reuse it if found.
+ *  2. Otherwise create a new client via mapOrderToDaftraClient.
+ *  3. If creation fails with "Email already exists", recover by looking the
+ *     client up again and reusing it instead of failing the whole sync.
+ */
+async function getOrCreateDaftraClient(
+  cesroOrder: CesroOrderForDaftra,
+  clientPayload: DaftraClientRequest,
+): Promise<{ id: string | null; error: string | null }> {
+  const email = cesroOrder.customerEmail?.trim() ?? "";
+
+  // 1) Reuse an existing Daftra client for repeat customers.
+  if (email) {
+    const existing = await findDaftraClientIdByEmail(email);
+    if (existing) {
+      console.info(
+        `[Daftra] Reusing existing Daftra client ${existing} for ${email}.`,
+      );
+      return { id: existing, error: null };
+    }
+  }
+
+  // 2) No existing client — create a new one.
+  console.info(
+    `[Daftra] Creating new Daftra client${email ? ` for ${email}` : ""}.`,
+  );
+  const clientResult = await daftraRequest<DaftraCreateResponse>(
+    "/clients.json",
+    { method: "POST", body: clientPayload },
+  );
+  const createdId = extractCreatedId(clientResult.data);
+  if (clientResult.ok && createdId) {
+    return { id: createdId, error: null };
+  }
+
+  // 3) Recover from a duplicate-email rejection by reusing the existing client.
+  if (email && isDuplicateEmailError(clientResult)) {
+    console.warn(
+      `[Daftra] Client email already exists for ${email}; recovering by looking up the existing client.`,
+    );
+    const recovered = await findDaftraClientIdByEmail(email);
+    if (recovered) {
+      console.info(
+        `[Daftra] Recovered existing Daftra client ${recovered} for ${email}.`,
+      );
+      return { id: recovered, error: null };
+    }
+  }
+
+  return {
+    id: null,
+    error:
+      clientResult.error ??
+      clientResult.data?.message ??
+      "Failed to create Daftra client.",
+  };
 }
 
 /**
@@ -238,23 +369,21 @@ export async function syncOrderToDaftra(
     })),
   };
 
-  // 1) Create / register the customer in Daftra.
+  // 1) Resolve the Daftra client — reuse an existing one for repeat customers,
+  // otherwise create a new client (recovering from duplicate-email rejections).
   const clientPayload = mapOrderToDaftraClient(cesroOrder);
-  const clientResult = await daftraRequest<DaftraCreateResponse>(
-    "/clients.json",
-    { method: "POST", body: clientPayload },
+  const clientResolution = await getOrCreateDaftraClient(
+    cesroOrder,
+    clientPayload,
   );
 
-  const daftraCustomerId = extractCreatedId(clientResult.data);
-  if (!clientResult.ok || !daftraCustomerId) {
+  const daftraCustomerId = clientResolution.id;
+  if (!daftraCustomerId) {
     const failed: DaftraSyncResult = {
       status: "failed",
       daftraCustomerId: null,
       daftraInvoiceId: null,
-      error:
-        clientResult.error ??
-        clientResult.data?.message ??
-        "Failed to create Daftra client.",
+      error: clientResolution.error ?? "Failed to create Daftra client.",
     };
     await persistSyncResult(orderId, failed, { client: clientPayload });
     return failed;

@@ -21,6 +21,44 @@ interface DaftraRequestOptions {
 }
 
 /**
+ * Extracts a human-readable error description from a Daftra error response.
+ * Daftra returns validation failures in a few shapes (`message`, `error`,
+ * `errors`); we flatten whatever is present so callers (and the dashboard)
+ * can see the real reason behind a non-2xx status. Falls back to the raw body.
+ */
+function extractDaftraErrorDetails(data: unknown, raw: string): string | null {
+  if (data && typeof data === "object") {
+    const obj = data as Record<string, unknown>;
+    const parts: string[] = [];
+
+    if (typeof obj.message === "string" && obj.message.trim()) {
+      parts.push(obj.message.trim());
+    }
+    if (typeof obj.error === "string" && obj.error.trim()) {
+      parts.push(obj.error.trim());
+    }
+    if (obj.errors && typeof obj.errors === "object") {
+      try {
+        parts.push(JSON.stringify(obj.errors));
+      } catch {
+        // ignore non-serializable errors object
+      }
+    }
+
+    if (parts.length > 0) return parts.join(" ");
+
+    try {
+      return JSON.stringify(obj);
+    } catch {
+      // fall through to raw
+    }
+  }
+
+  const trimmed = raw?.trim();
+  return trimmed ? trimmed.slice(0, 500) : null;
+}
+
+/**
  * Performs an authenticated JSON request against the Daftra API.
  *
  * @param path API path relative to the configured base URL, e.g. "/clients.json".
@@ -81,12 +119,15 @@ export async function daftraRequest<T = unknown>(
     }
 
     if (!response.ok) {
+      // Surface the real Daftra validation details (e.g. why a 400 happened)
+      // so the dashboard shows actionable errors instead of just the status.
+      const details = extractDaftraErrorDetails(data, raw);
+      const base = `Daftra request failed with status ${response.status}.`;
       return {
         ok: false,
         status: response.status,
         data,
-        error:
-          parseError ?? `Daftra request failed with status ${response.status}.`,
+        error: parseError ?? (details ? `${base} ${details}` : base),
       };
     }
 

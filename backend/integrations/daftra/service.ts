@@ -260,10 +260,26 @@ export async function syncOrderToDaftra(
     return failed;
   }
 
-  // 2) Create the sales invoice for that customer.
+  // 2) Resolve and validate the Daftra store id. This must be the real Daftra
+  // store/warehouse id (DAFTRA_STORE_ID), never a Cesro internal UUID.
+  const config = getDaftraConfig();
+  const daftraStoreId = Number.parseInt(config.storeId, 10);
+  if (!Number.isInteger(daftraStoreId) || daftraStoreId <= 0) {
+    const failed: DaftraSyncResult = {
+      status: "failed",
+      daftraCustomerId,
+      daftraInvoiceId: null,
+      error: "DAFTRA_STORE_ID is required to create Daftra invoice.",
+    };
+    await persistSyncResult(orderId, failed, { client: clientPayload });
+    return failed;
+  }
+
+  // 3) Create the sales invoice for that customer.
   const invoicePayload = mapOrderToDaftraInvoice(
     cesroOrder,
     Number.parseInt(daftraCustomerId, 10),
+    daftraStoreId,
   );
   const invoiceResult = await daftraRequest<DaftraCreateResponse>(
     "/invoices.json",

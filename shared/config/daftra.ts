@@ -11,6 +11,7 @@
  * - DAFTRA_ENABLED        "true" to turn the integration on (default off)
  * - DAFTRA_BASE_URL       e.g. https://yoursubdomain.daftra.com/api2
  * - DAFTRA_API_KEY        APIKEY header credential (preferred)
+ * - DAFTRA_STORE_ID       Daftra store/warehouse id used on invoices
  * - DAFTRA_CLIENT_ID      OAuth client id
  * - DAFTRA_CLIENT_SECRET  OAuth client secret
  * - DAFTRA_ACCESS_TOKEN   Bearer access token
@@ -52,6 +53,7 @@ export function getDaftraConfig() {
     enabled: isDaftraEnabled(),
     baseUrl: (process.env.DAFTRA_BASE_URL ?? "").replace(/\/+$/, ""),
     apiKey: process.env.DAFTRA_API_KEY ?? "",
+    storeId: process.env.DAFTRA_STORE_ID ?? "",
     clientId: process.env.DAFTRA_CLIENT_ID ?? "",
     clientSecret: process.env.DAFTRA_CLIENT_SECRET ?? "",
     accessToken: process.env.DAFTRA_ACCESS_TOKEN ?? "",

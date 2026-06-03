@@ -7,7 +7,6 @@
  * (client_id, store_id, product_id) beyond accepting them as inputs.
  */
 
-import { DEFAULT_STORE_ID } from "#root/shared/config/store";
 import type {
   DaftraClientRequest,
   DaftraInvoiceItem,
@@ -104,12 +103,12 @@ export function mapOrderToDaftraClient(
  *
  * @param order     The accepted Cesro order.
  * @param clientId  Resolved Daftra client id (required by Daftra).
- * @param storeId   Daftra store id; defaults to the configured store.
+ * @param storeId   Daftra store id (required; from DAFTRA_STORE_ID).
  */
 export function mapOrderToDaftraInvoice(
   order: CesroOrderForDaftra,
   clientId: number,
-  storeId = Number.parseInt(DEFAULT_STORE_ID, 10) || 0,
+  storeId: number,
 ): DaftraInvoiceRequest {
   const { first, last } = splitName(order.customerName);
 

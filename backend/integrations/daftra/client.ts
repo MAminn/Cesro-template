@@ -40,12 +40,12 @@ export async function daftraRequest<T = unknown>(
       error: "Daftra base URL is not configured.",
     };
   }
-  if (!config.accessToken) {
+  if (!config.apiKey && !config.accessToken) {
     return {
       ok: false,
       status: 0,
       data: null,
-      error: "Daftra access token is not configured.",
+      error: "Daftra API key or access token is not configured.",
     };
   }
 
@@ -54,12 +54,16 @@ export async function daftraRequest<T = unknown>(
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
+    const authHeaders: Record<string, string> = config.apiKey
+      ? { APIKEY: config.apiKey }
+      : { Authorization: `Bearer ${config.accessToken}` };
+
     const response = await fetch(url, {
       method,
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Bearer ${config.accessToken}`,
+        ...authHeaders,
       },
       body: body === undefined ? undefined : JSON.stringify(body),
       signal: controller.signal,

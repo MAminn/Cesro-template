@@ -288,14 +288,30 @@ export async function syncOrderToDaftra(
 
   const daftraInvoiceId = extractCreatedId(invoiceResult.data);
   if (!invoiceResult.ok || !daftraInvoiceId) {
+    // Verbose, secret-free diagnostics. The payload contains no APIKEY (auth is
+    // injected at the HTTP-client layer), so it is safe to log in full here.
+    console.error(
+      `[Daftra] Invoice creation failed for order ${orderId}. Payload:`,
+      JSON.stringify(invoicePayload),
+    );
+    console.error(
+      `[Daftra] Invoice result — status=${invoiceResult.status}, ` +
+        `error=${invoiceResult.error ?? "null"}`,
+    );
+    console.error(
+      "[Daftra] Invoice response data:",
+      JSON.stringify(invoiceResult.data ?? null),
+    );
+
+    const detailedError =
+      invoiceResult.error ??
+      invoiceResult.data?.message ??
+      "Failed to create Daftra invoice.";
     const failed: DaftraSyncResult = {
       status: "failed",
       daftraCustomerId,
       daftraInvoiceId: null,
-      error:
-        invoiceResult.error ??
-        invoiceResult.data?.message ??
-        "Failed to create Daftra invoice.",
+      error: detailedError,
     };
     await persistSyncResult(orderId, failed, {
       client: clientPayload,

@@ -672,9 +672,16 @@ export default function Orders() {
                             )}
                             {order.daftraSyncStatus === "failed" &&
                               order.daftraLastSyncError && (
-                                <span className='text-xs text-red-600 max-w-45 truncate'>
-                                  {order.daftraLastSyncError}
-                                </span>
+                                <details className='group max-w-60'>
+                                  <summary className='cursor-pointer list-none text-xs text-red-600'>
+                                    <span className='underline decoration-dotted underline-offset-2'>
+                                      Daftra error (click to expand)
+                                    </span>
+                                  </summary>
+                                  <pre className='mt-1 max-h-60 max-w-60 overflow-auto whitespace-pre-wrap wrap-break-word rounded border border-red-200 bg-red-50 p-2 text-[11px] leading-snug text-red-700'>
+                                    {order.daftraLastSyncError}
+                                  </pre>
+                                </details>
                               )}
                             {isStaff &&
                               order.status === "processing" &&

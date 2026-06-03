@@ -60,6 +60,37 @@ function today(): string {
 }
 
 /**
+ * Normalizes a free-form country value into a Daftra-valid ISO-2 code.
+ * Daftra rejects anything that is not a recognized country code (e.g. it
+ * returns `country_code: "Invalid country"` for "Egypt"). To stay safe we only
+ * emit a value when we are confident it is a 2-letter code; otherwise we omit
+ * the field entirely.
+ *
+ * - missing/null/empty            => undefined
+ * - exactly 2 letters             => uppercased (e.g. "eg" => "EG")
+ * - "Egypt" / "EGY" (any case)    => "EG"
+ * - anything else                 => undefined
+ */
+function normalizeCountryCode(
+  value: string | null | undefined,
+): string | undefined {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+
+  if (/^[A-Za-z]{2}$/.test(trimmed)) {
+    return trimmed.toUpperCase();
+  }
+
+  const upper = trimmed.toUpperCase();
+  if (upper === "EGYPT" || upper === "EGY") {
+    return "EG";
+  }
+
+  return undefined;
+}
+
+/**
  * Splits a free-form customer name into first/last for Daftra fields.
  * Daftra requires first_name/last_name on clients; we keep the full name as
  * the business_name (shop name) for B2B wholesale customers.
@@ -90,7 +121,7 @@ export function mapOrderToDaftraClient(
       city: order.shippingCity,
       state: order.shippingState ?? undefined,
       postal_code: order.shippingPostalCode ?? undefined,
-      country_code: order.shippingCountry ?? undefined,
+      country_code: normalizeCountryCode(order.shippingCountry),
       notes: `Cesro order ref: ${order.id}`,
       // Wholesale buyers are businesses.
       type: 3,
@@ -143,7 +174,7 @@ export function mapOrderToDaftraInvoice(
       client_city: order.shippingCity,
       client_state: order.shippingState ?? undefined,
       client_postal_code: order.shippingPostalCode ?? undefined,
-      client_country_code: order.shippingCountry ?? undefined,
+      client_country_code: normalizeCountryCode(order.shippingCountry),
       currency_code: getCurrencyCode(),
       date: today(),
       discount_amount: orderDiscount,
